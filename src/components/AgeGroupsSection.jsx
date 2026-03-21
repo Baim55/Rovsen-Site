@@ -1,8 +1,48 @@
-// data/data.js — dəyişiklik yoxdur, eyni qalır
-
-// components/AgeGroupsSection.jsx
 import { useNavigate } from "react-router-dom";
 import { ageGroups } from "../data/data";
+
+const AGE_STYLES = {
+  "1-6": {
+    bg:        "bg-amber-50",
+    border:    "border-amber-200",
+    badge:     "bg-amber-100 text-amber-700",
+    btnBg:     "bg-amber-400 hover:bg-amber-500",
+    btnText:   "text-white",
+    text:      "text-amber-600",
+    dot:       "bg-amber-400",
+    glow:      "hover:shadow-amber-100",
+  },
+  "6-10": {
+    bg:        "bg-emerald-50",
+    border:    "border-emerald-200",
+    badge:     "bg-emerald-100 text-emerald-700",
+    btnBg:     "bg-emerald-500 hover:bg-emerald-600",
+    btnText:   "text-white",
+    text:      "text-emerald-600",
+    dot:       "bg-emerald-400",
+    glow:      "hover:shadow-emerald-100",
+  },
+  "11-17": {
+    bg:        "bg-blue-50",
+    border:    "border-blue-200",
+    badge:     "bg-blue-100 text-blue-700",
+    btnBg:     "bg-blue-500 hover:bg-blue-600",
+    btnText:   "text-white",
+    text:      "text-blue-600",
+    dot:       "bg-blue-400",
+    glow:      "hover:shadow-blue-100",
+  },
+  "18+": {
+    bg:        "bg-violet-50",
+    border:    "border-violet-200",
+    badge:     "bg-violet-100 text-violet-700",
+    btnBg:     "bg-violet-500 hover:bg-violet-600",
+    btnText:   "text-white",
+    text:      "text-violet-600",
+    dot:       "bg-violet-400",
+    glow:      "hover:shadow-violet-100",
+  },
+};
 
 function AgeGroupsSection() {
   const navigate = useNavigate();
@@ -22,77 +62,85 @@ function AgeGroupsSection() {
           >
             Yaş qrupları üzrə inkişaf
           </h2>
-          <p className="text-gray-500 max-w-xl mx-auto">
+          <p className="text-gray-500 max-w-xl mx-auto text-sm">
             Yaş dövrünüzü seçin, rolunuzu seçin, lazımi resurslara çatın
           </p>
         </div>
 
         {/* Kartlar */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {ageGroups.map((g, index) => (
-            <div
-              key={g.id}
-              onClick={() => navigate(`/yas/${g.id}`)}
-              className={`
-                relative ${g.bg} border-2 ${g.border}
-                rounded-3xl p-6 cursor-pointer group
-                hover:shadow-xl transition-all duration-300 hover:-translate-y-2
-              `}
-              style={{ animationDelay: `${index * 80}ms` }}
-            >
-              {/* Yuxarı sıra: emoji + rəngli indicator nöqtəsi */}
-              <div className="flex items-start justify-between mb-4">
-                <span className="text-5xl">{g.emoji}</span>
-                <span className={`w-3 h-3 rounded-full ${g.dot} mt-1`} />
-              </div>
-
-              {/* Yaş + etiket */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          {ageGroups.map((g, index) => {
+            const s = AGE_STYLES[g.id] ?? {};
+            return (
               <div
-                className={`text-xl font-bold ${g.text} mb-1`}
-                style={{ fontFamily: "'Georgia', serif" }}
-              >
-                {g.age}
-              </div>
-              <div className="text-sm font-semibold text-gray-600 mb-3">
-                {g.label}
-              </div>
-
-              {/* Təsvir */}
-              <p className="text-gray-500 text-sm leading-relaxed mb-5">
-                {g.desc}
-              </p>
-
-              {/* Kateqoriya badges */}
-              <div className="flex flex-wrap gap-1.5 mb-6">
-                {g.categories.slice(0, 3).map((cat) => (
-                  <span
-                    key={cat}
-                    className={`text-xs px-2 py-0.5 rounded-full ${g.badge} bg-opacity-20 ${g.text} font-medium`}
-                  >
-                    {cat.replace(" üçün", "")}
-                  </span>
-                ))}
-                {g.categories.length > 3 && (
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${g.text} font-medium opacity-60`}>
-                    +{g.categories.length - 3}
-                  </span>
-                )}
-              </div>
-
-              {/* Button */}
-              <button
+                key={g.id}
+                onClick={() => navigate(`/yas/${g.id}`)}
                 className={`
-                  w-full ${g.badge} bg-opacity-90 ${g.text}
-                  font-semibold py-2.5 rounded-xl text-sm
-                  transition-all duration-200
-                  group-hover:bg-opacity-100 group-hover:shadow-md
-                  border-2 ${g.border}
+                  relative ${s.bg} border ${s.border}
+                  rounded-2xl p-6 cursor-pointer group flex flex-col
+                  hover:shadow-xl ${s.glow}
+                  transition-all duration-300 hover:-translate-y-1.5
                 `}
+                style={{ animationDelay: `${index * 80}ms` }}
               >
-                Bölməyə keç →
-              </button>
-            </div>
-          ))}
+                {/* Yuxarı — emoji + dot */}
+                <div className="flex items-start justify-between mb-5">
+                  <div className="text-4xl">{g.emoji}</div>
+                  <span className={`w-2 h-2 rounded-full ${s.dot} mt-1.5`} />
+                </div>
+
+                {/* Yaş */}
+                <div
+                  className={`text-2xl font-bold ${s.text} mb-0.5`}
+                  style={{ fontFamily: "'Georgia', serif" }}
+                >
+                  {g.age}
+                </div>
+
+                {/* Label */}
+                <div className="text-sm font-semibold text-gray-700 mb-2">
+                  {g.label}
+                </div>
+
+                {/* Ayırıcı xətt */}
+                <div className={`h-px ${s.border} bg-current opacity-30 mb-3`} />
+
+                {/* Təsvir */}
+                <p className="text-gray-500 text-xs leading-relaxed mb-4 flex-1">
+                  {g.desc}
+                </p>
+
+                {/* Kateqoriya badges */}
+                <div className="flex flex-wrap gap-1.5 mb-5">
+                  {g.categories.slice(0, 3).map((cat) => (
+                    <span
+                      key={cat}
+                      className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${s.badge}`}
+                    >
+                      {cat}
+                    </span>
+                  ))}
+                  {g.categories.length > 3 && (
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${s.badge} opacity-60`}>
+                      +{g.categories.length - 3}
+                    </span>
+                  )}
+                </div>
+
+                {/* Button */}
+                <button
+                  className={`
+                    w-full ${s.btnBg} ${s.btnText}
+                    font-semibold py-2.5 rounded-xl text-sm
+                    transition-all duration-200
+                    group-hover:shadow-md
+                  `}
+                >
+                  Bölməyə keç →
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

@@ -1,5 +1,13 @@
 import { specialists } from "../data/data";
 
+// Rəng konfiqurasiyası — data.js-dən çıxarılıb, burada saxlanır
+const SPECIALIST_STYLES = [
+  "bg-blue-100 text-blue-700",
+  "bg-emerald-100 text-emerald-700",
+  "bg-amber-100 text-amber-700",
+  "bg-violet-100 text-violet-700",
+];
+
 function SpecialistsSection() {
   return (
     <section className="py-20 px-6 bg-slate-50">
@@ -21,22 +29,20 @@ function SpecialistsSection() {
           </button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {specialists.map((s) => (
+          {specialists.map((s, index) => (
             <div
               key={s.name}
               className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all text-center group cursor-pointer"
             >
               <div
-                className={`w-20 h-20 rounded-2xl ${s.color} flex items-center justify-center text-2xl font-bold mx-auto mb-4`}
+                className={`w-20 h-20 rounded-2xl ${SPECIALIST_STYLES[index % SPECIALIST_STYLES.length]} flex items-center justify-center text-2xl font-bold mx-auto mb-4`}
               >
                 {s.initial}
               </div>
               <div className="font-semibold text-gray-900 mb-1 group-hover:text-emerald-600 transition-colors">
                 {s.name}
               </div>
-              <div className="text-sm text-emerald-600 font-medium mb-1">
-                {s.role}
-              </div>
+              <div className="text-sm text-emerald-600 font-medium mb-1">{s.role}</div>
               <div className="text-xs text-gray-400 mb-4">{s.exp} təcrübə</div>
               <button className="w-full border border-gray-200 text-gray-600 text-sm py-2 rounded-xl hover:border-emerald-300 hover:text-emerald-600 transition-all">
                 Profil

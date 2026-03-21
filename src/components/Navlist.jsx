@@ -28,7 +28,7 @@ export default function NavList({ mobile = false, onClose }) {
   }
 
   return (
-    <nav className="hidden md:flex items-center gap-1">
+    <nav className="hidden lg:flex items-center gap-1">
       {navLinks.map((link) => (
         <Link
           key={link.label}

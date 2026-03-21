@@ -1,14 +1,51 @@
+// src/pages/AgeGroupPage.jsx
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { ageGroups, yearArticles, subAgeGroups } from "../data/data";
+import { ageGroups, subAgeGroups, developmentAreas } from "../data/data";
+import { useArticles } from "../hooks/useArticles";
+import { useAuth } from "../hooks/useAuth";
+
+const AGE_STYLES = {
+  "1-6": {
+    bg: "bg-amber-50",
+    border: "border-amber-300",
+    badge: "bg-amber-400",
+    text: "text-amber-700",
+    dot: "bg-amber-400",
+  },
+  "6-10": {
+    bg: "bg-emerald-50",
+    border: "border-emerald-300",
+    badge: "bg-emerald-400",
+    text: "text-emerald-700",
+    dot: "bg-emerald-400",
+  },
+  "11-17": {
+    bg: "bg-blue-50",
+    border: "border-blue-300",
+    badge: "bg-blue-400",
+    text: "text-blue-700",
+    dot: "bg-blue-400",
+  },
+  "18+": {
+    bg: "bg-violet-50",
+    border: "border-violet-300",
+    badge: "bg-violet-400",
+    text: "text-violet-700",
+    dot: "bg-violet-400",
+  },
+};
 
 export default function AgeGroupPage() {
+  const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
   const group = ageGroups.find((g) => g.id === id);
+  const style = AGE_STYLES[id] ?? {};
 
   const [activeTab, setActiveTab] = useState(0);
-  const [activeSub, setActiveSub] = useState(0); // yalnız 1-6 üçün
+  const [activeSub, setActiveSub] = useState(0);
+  const [activeArea, setActiveArea] = useState("fiziki");
 
   if (!group) {
     return (
@@ -30,16 +67,24 @@ export default function AgeGroupPage() {
   const tabs = group.categories;
   const tabName = tabs[activeTab];
   const subs = subAgeGroups[id] || [];
+  const subId = subs[activeSub]?.id;
 
-  const articles =
-    is16 && tabName === "Uşaqlar"
-      ? yearArticles["1-6"]?.["Uşaqlar"]?.[subs[activeSub]?.id] || []
-      : yearArticles[id]?.[tabName] || [];
+  // ── Hook: filterlər dəyişdikdə avtomatik fetch ──
+  const filters = {
+    ageGroup: id,
+    category: tabName,
+    ...(is16 && tabName === "Uşaqlar" && subId ? { subAge: subId } : {}),
+    ...(is16 && tabName === "Uşaqlar" && activeArea
+      ? { area: activeArea }
+      : {}),
+  };
+
+  const { articles, loading, error, refetch } = useArticles(filters);
 
   return (
     <div className="min-h-screen bg-gray-50 mt-25">
-      {/* Hero banner */}
-      <div className={`${group.bg} border-y-2 ${group.border} py-10 px-6`}>
+      {/* ── Hero banner ── */}
+      <div className={`${style.bg} border-y-2 ${style.border} py-10 px-6`}>
         <div className="max-w-5xl mx-auto">
           <button
             onClick={() => navigate(-1)}
@@ -51,12 +96,12 @@ export default function AgeGroupPage() {
             <span className="text-6xl">{group.emoji}</span>
             <div>
               <p
-                className={`text-sm font-semibold ${group.text} uppercase tracking-widest mb-1`}
+                className={`text-sm font-semibold ${style.text} uppercase tracking-widest mb-1`}
               >
                 İnkişaf akademiyası
               </p>
               <h1
-                className={`text-4xl font-bold ${group.text} mb-2`}
+                className={`text-4xl font-bold ${style.text} mb-2`}
                 style={{ fontFamily: "'Georgia', serif" }}
               >
                 {group.age}
@@ -69,7 +114,7 @@ export default function AgeGroupPage() {
         </div>
       </div>
 
-      {/* Sticky tab-lar */}
+      {/* ── Sticky tablar ── */}
       <div className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-5xl mx-auto px-6">
           <div className="flex gap-1 flex-wrap items-center justify-center lg:justify-start py-2">
@@ -79,12 +124,13 @@ export default function AgeGroupPage() {
                 onClick={() => {
                   setActiveTab(i);
                   setActiveSub(0);
+                  setActiveArea("fiziki");
                 }}
                 className={`
                   whitespace-nowrap px-4 py-2 rounded-xl text-sm font-semibold transition-all
                   ${
                     activeTab === i
-                      ? `${group.badge} bg-opacity-20 ${group.text}`
+                      ? `${style.badge} bg-opacity-20 ${style.text}`
                       : "text-gray-500 hover:text-gray-800 hover:bg-gray-100"
                   }
                 `}
@@ -96,52 +142,90 @@ export default function AgeGroupPage() {
         </div>
       </div>
 
-      {/* Məzmun */}
+      {/* ── Məzmun ── */}
       <div className="max-w-5xl mx-auto px-6 py-10">
-        {/* 1-6 + Uşaqlar tab-ı seçiləndə: 1-3 / 3-6 alt seçici */}
-        {is16 && tabName === "Uşaqlar" && subs.length > 0 && (
-          <div className="flex gap-3 mb-8">
-            {subs.map((sub, i) => (
-              <button
-                key={sub.id}
-                onClick={() => setActiveSub(i)}
-                className={`
-                  px-6 py-3 rounded-2xl font-bold text-sm transition-all
-                  ${
-                    activeSub === i
-                      ? `${group.badge} bg-opacity-30 ${group.text} shadow-sm`
-                      : "bg-white border-2 border-gray-200 text-gray-500 hover:border-gray-300"
-                  }
-                `}
-              >
-                {sub.label}
-              </button>
-            ))}
-          </div>
+        {/* 1-6 / Uşaqlar üçün sub-filter */}
+        {is16 && tabName === "Uşaqlar" && (
+          <>
+            <div className="flex gap-3 mb-6">
+              {subs.map((sub, i) => (
+                <button
+                  key={sub.id}
+                  onClick={() => {
+                    setActiveSub(i);
+                    setActiveArea("fiziki");
+                  }}
+                  className={`
+                    px-6 py-3 rounded-2xl font-bold text-sm transition-all
+                    ${
+                      activeSub === i
+                        ? `${style.badge} bg-opacity-30 ${style.text} shadow-sm`
+                        : "bg-white border-2 border-gray-200 text-gray-500 hover:border-gray-300"
+                    }
+                  `}
+                >
+                  {sub.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+              {developmentAreas.map((area) => (
+                <button
+                  key={area.id}
+                  onClick={() => setActiveArea(area.id)}
+                  className={`
+                    p-4 rounded-2xl text-left transition-all border-2
+                    ${
+                      activeArea === area.id
+                        ? `${style.bg} ${style.border} ${style.text}`
+                        : "bg-white border-gray-200 text-gray-600 hover:border-gray-300"
+                    }
+                  `}
+                >
+                  <div className="text-2xl mb-2">{area.emoji}</div>
+                  <div className="text-xs font-bold leading-tight">
+                    {area.label}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </>
         )}
 
-        {/* Başlıq */}
+        {/* Başlıq sətri */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-gray-800">
             {is16 && tabName === "Uşaqlar"
-              ? `${subs[activeSub]?.label} — məqalələr`
+              ? `${subs[activeSub]?.label} — ${developmentAreas.find((a) => a.id === activeArea)?.label}`
               : `${tabName} — məqalələr`}
           </h2>
-          <span className="text-sm text-gray-400">
-            {articles.length} məqalə
-          </span>
+          <div className="flex items-center gap-3">
+            {!loading && (
+              <span className="text-sm text-gray-400">
+                {articles.length} məqalə
+              </span>
+            )}
+            <button
+              onClick={refetch}
+              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+              title="Yenilə"
+            >
+              ↻
+            </button>
+          </div>
         </div>
 
-        {/* Məqalələr */}
-        {articles.length === 0 ? (
-          <div className="text-center py-20 text-gray-400">
-            <p className="text-4xl mb-4">📭</p>
-            <p>Bu bölmə üçün hələ məqalə yoxdur</p>
-          </div>
-        ) : (
+        {/* State-lər */}
+        {loading && <LoadingState style={style} />}
+        {error && <ErrorState message={error} onRetry={refetch} />}
+
+        {!loading && !error && articles.length === 0 && <EmptyState />}
+
+        {!loading && !error && articles.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {articles.map((article, i) => (
-              <ArticleCard key={i} article={article} group={group} />
+            {articles.map((article) => (
+              <ArticleCard key={article.id} article={article} style={style} />
             ))}
           </div>
         )}
@@ -150,23 +234,94 @@ export default function AgeGroupPage() {
   );
 }
 
-function ArticleCard({ article, group }) {
+/* ── Alt komponentlər ── */
+
+
+function ArticleCard({ article, style }) {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+ 
+  function handleClick() {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    navigate(`/meqale/${article.id}`);
+  }
+ 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group">
+    <div
+      onClick={handleClick}
+      className="bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group relative"
+    >
       <div className="flex items-start justify-between gap-3 mb-3">
-        <span
-          className={`text-xs font-semibold px-2.5 py-1 rounded-full ${group.badge} bg-opacity-20 ${group.text}`}
-        >
+        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${style.badge} bg-opacity-20 ${style.text}`}>
           {article.tag}
         </span>
-        <span className="text-xs text-gray-400 whitespace-nowrap">
-          {article.time} oxu
-        </span>
+        <span className="text-xs text-gray-400 whitespace-nowrap">{article.time} oxu</span>
       </div>
       <h3 className="text-gray-800 font-semibold text-base leading-snug group-hover:text-gray-900">
         {article.title}
       </h3>
-      <p className={`mt-3 text-sm font-medium ${group.text}`}>Oxu →</p>
+ 
+      {/* Login olmayanlara kilit ikonu */}
+      {!user && (
+        <div className="mt-3 flex items-center gap-1.5 text-xs text-gray-400">
+          <span>🔒</span>
+          <span>Oxumaq üçün daxil olun</span>
+        </div>
+      )}
+      {user && (
+        <p className={`mt-3 text-sm font-medium ${style.text}`}>Oxu →</p>
+      )}
+    </div>
+  );
+}
+
+
+function LoadingState({ style }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {[1, 2, 3, 4].map((i) => (
+        <div
+          key={i}
+          className="bg-white rounded-2xl border border-gray-200 p-5 animate-pulse"
+        >
+          <div className="flex gap-3 mb-3">
+            <div
+              className={`h-6 w-16 rounded-full ${style.badge} bg-opacity-20`}
+            />
+            <div className="h-6 w-12 rounded-full bg-gray-100 ml-auto" />
+          </div>
+          <div className="h-4 bg-gray-100 rounded mb-2 w-full" />
+          <div className="h-4 bg-gray-100 rounded w-3/4" />
+          <div className="h-4 bg-gray-100 rounded mt-4 w-16" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ErrorState({ message, onRetry }) {
+  return (
+    <div className="text-center py-16">
+      <p className="text-4xl mb-3">⚠️</p>
+      <p className="text-gray-500 mb-4">{message}</p>
+      <button
+        onClick={onRetry}
+        className="px-5 py-2 bg-gray-800 text-white rounded-xl text-sm font-semibold hover:bg-gray-700 transition-colors"
+      >
+        Yenidən cəhd et
+      </button>
+    </div>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="text-center py-20 text-gray-400">
+      <p className="text-4xl mb-4">📭</p>
+      <p>Bu bölmə üçün hələ məqalə yoxdur</p>
     </div>
   );
 }

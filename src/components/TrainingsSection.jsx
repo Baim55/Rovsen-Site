@@ -1,5 +1,12 @@
 import { trainings } from "../data/data";
 
+const TAG_STYLES = {
+  "Davam edir": "bg-emerald-100 text-emerald-700",
+  "Yeni":       "bg-blue-100 text-blue-700",
+  "Tezliklə":   "bg-amber-100 text-amber-700",
+  "Açıq":       "bg-violet-100 text-violet-700",
+};
+
 function TrainingsSection() {
   return (
     <section className="py-20 px-6 bg-white">
@@ -27,9 +34,7 @@ function TrainingsSection() {
               className="border-2 border-gray-100 rounded-2xl p-6 hover:border-emerald-200 hover:shadow-md transition-all cursor-pointer group"
             >
               <div className="text-4xl mb-4">{t.icon}</div>
-              <span
-                className={`text-xs font-semibold px-2.5 py-1 rounded-full ${t.tagCls}`}
-              >
+              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${TAG_STYLES[t.tag] ?? "bg-gray-100 text-gray-600"}`}>
                 {t.tag}
               </span>
               <div className="font-semibold text-gray-800 mt-3 mb-2 group-hover:text-emerald-700 transition-colors">

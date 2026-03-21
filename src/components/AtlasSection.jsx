@@ -1,8 +1,16 @@
 import { useState } from "react";
 import { ageGroups } from "../data/data";
 
+// Rəng konfiqurasiyası — data.js-dən çıxarılıb, burada saxlanır
+const AGE_STYLES = {
+  "1-6":   { bg: "bg-amber-50",   border: "border-amber-300",   badge: "bg-amber-400",   text: "text-amber-700" },
+  "6-10":  { bg: "bg-emerald-50", border: "border-emerald-300", badge: "bg-emerald-400", text: "text-emerald-700" },
+  "11-17": { bg: "bg-blue-50",    border: "border-blue-300",    badge: "bg-blue-400",    text: "text-blue-700" },
+  "18+":   { bg: "bg-violet-50",  border: "border-violet-300",  badge: "bg-violet-400",  text: "text-violet-700" },
+};
+
 function AtlasSection() {
-  const [selectedAge, setSelectedAge] = useState(null);
+  const [selectedAge,  setSelectedAge]  = useState(null);
   const [selectedArea, setSelectedArea] = useState(null);
 
   const areas = [
@@ -11,6 +19,7 @@ function AtlasSection() {
     "Nitq inkişafı",
     "Öyrənmə bacarıqları",
   ];
+
   const recs = {
     "Emosional inkişaf": [
       "Hisslərini adlandırma oyunları",
@@ -60,11 +69,12 @@ function AtlasSection() {
             {ageGroups.map((g) => (
               <button
                 key={g.id}
-                onClick={() => {
-                  setSelectedAge(g.id);
-                  setSelectedArea(null);
-                }}
-                className={`p-3 rounded-xl border transition-all text-center ${selectedAge === g.id ? "border-emerald-400 bg-emerald-500/20 text-white" : "border-white/10 text-slate-300 hover:border-white/30"}`}
+                onClick={() => { setSelectedAge(g.id); setSelectedArea(null); }}
+                className={`p-3 rounded-xl border transition-all text-center ${
+                  selectedAge === g.id
+                    ? "border-emerald-400 bg-emerald-500/20 text-white"
+                    : "border-white/10 text-slate-300 hover:border-white/30"
+                }`}
               >
                 <div className="text-2xl mb-1">{g.emoji}</div>
                 <div className="text-xs font-medium">{g.age}</div>
@@ -82,7 +92,11 @@ function AtlasSection() {
                   <button
                     key={area}
                     onClick={() => setSelectedArea(area)}
-                    className={`p-3 rounded-xl border text-sm font-medium transition-all text-left ${selectedArea === area ? "border-emerald-400 bg-emerald-500/20 text-white" : "border-white/10 text-slate-300 hover:border-white/30"}`}
+                    className={`p-3 rounded-xl border text-sm font-medium transition-all text-left ${
+                      selectedArea === area
+                        ? "border-emerald-400 bg-emerald-500/20 text-white"
+                        : "border-white/10 text-slate-300 hover:border-white/30"
+                    }`}
                   >
                     {area}
                   </button>
@@ -98,10 +112,7 @@ function AtlasSection() {
               </p>
               <ul className="space-y-3 mb-5">
                 {recs[selectedArea].map((r) => (
-                  <li
-                    key={r}
-                    className="flex items-start gap-3 text-slate-200 text-sm"
-                  >
+                  <li key={r} className="flex items-start gap-3 text-slate-200 text-sm">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-2 flex-shrink-0" />
                     {r}
                   </li>
