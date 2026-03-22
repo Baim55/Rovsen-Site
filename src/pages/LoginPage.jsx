@@ -103,7 +103,7 @@ export default function LoginPage() {
                   onClick={() => setShowPw(!showPw)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  <FontAwesomeIcon icon={showPw ? faEyeSlash : faEye} />
+                  <FontAwesomeIcon icon={showPw ? faEye : faEyeSlash} />
                 </button>
               </div>
             </div>
