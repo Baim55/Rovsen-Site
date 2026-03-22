@@ -4,6 +4,25 @@ import { useState } from "react";
 import { ageGroups, subAgeGroups, developmentAreas } from "../data/data";
 import { useArticles } from "../hooks/useArticles";
 import { useAuth } from "../hooks/useAuth";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faLock,
+  faArrowRight,
+  faClock,
+  faTag,
+  faSeedling,
+  faLeaf,
+  faTree,
+  faGraduationCap,
+  faDumbbell,
+  faBrain,
+  faPalette,
+  faHeart,
+  faRotateRight,
+  faTriangleExclamation,
+  faBoxOpen,
+  faChevronLeft,
+} from "@fortawesome/free-solid-svg-icons";
 
 const AGE_STYLES = {
   "1-6": {
@@ -36,12 +55,27 @@ const AGE_STYLES = {
   },
 };
 
+const AGE_ICONS = {
+  "1-6": { icon: faSeedling, bg: "bg-amber-400" },
+  "6-10": { icon: faLeaf, bg: "bg-emerald-400" },
+  "11-17": { icon: faTree, bg: "bg-blue-400" },
+  "18+": { icon: faGraduationCap, bg: "bg-violet-400" },
+};
+
+const AREA_ICONS = {
+  fiziki: { icon: faDumbbell, color: "text-orange-500", bg: "bg-orange-50" },
+  idrak: { icon: faBrain, color: "text-blue-500", bg: "bg-blue-50" },
+  estetik: { icon: faPalette, color: "text-pink-500", bg: "bg-pink-50" },
+  sosial: { icon: faHeart, color: "text-red-500", bg: "bg-red-50" },
+};
+
 export default function AgeGroupPage() {
   const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
   const group = ageGroups.find((g) => g.id === id);
   const style = AGE_STYLES[id] ?? {};
+  const ageIcon = AGE_ICONS[id] ?? {};
 
   const [activeTab, setActiveTab] = useState(0);
   const [activeSub, setActiveSub] = useState(0);
@@ -51,6 +85,10 @@ export default function AgeGroupPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
+          <FontAwesomeIcon
+            icon={faBoxOpen}
+            className="text-4xl text-gray-300 mb-4"
+          />
           <p className="text-gray-400 text-lg mb-4">Səhifə tapılmadı</p>
           <button
             onClick={() => navigate("/")}
@@ -69,7 +107,6 @@ export default function AgeGroupPage() {
   const subs = subAgeGroups[id] || [];
   const subId = subs[activeSub]?.id;
 
-  // ── Hook: filterlər dəyişdikdə avtomatik fetch ──
   const filters = {
     ageGroup: id,
     category: tabName,
@@ -90,16 +127,19 @@ export default function AgeGroupPage() {
             onClick={() => navigate(-1)}
             className="flex items-center gap-2 text-gray-500 hover:text-gray-800 text-sm mb-5 transition-colors"
           >
-            ← Geri
+            <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
+            Geri
           </button>
           <div className="flex items-center gap-5">
-            <span className="text-6xl">{group.emoji}</span>
+            <div
+              className={`w-16 h-16 ${ageIcon.bg} rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0`}
+            >
+              <FontAwesomeIcon
+                icon={ageIcon.icon}
+                className="text-white text-3xl"
+              />
+            </div>
             <div>
-              <p
-                className={`text-sm font-semibold ${style.text} uppercase tracking-widest mb-1`}
-              >
-                İnkişaf akademiyası
-              </p>
               <h1
                 className={`text-4xl font-bold ${style.text} mb-2`}
                 style={{ fontFamily: "'Georgia', serif" }}
@@ -170,25 +210,35 @@ export default function AgeGroupPage() {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-              {developmentAreas.map((area) => (
-                <button
-                  key={area.id}
-                  onClick={() => setActiveArea(area.id)}
-                  className={`
-                    p-4 rounded-2xl text-left transition-all border-2
-                    ${
-                      activeArea === area.id
-                        ? `${style.bg} ${style.border} ${style.text}`
-                        : "bg-white border-gray-200 text-gray-600 hover:border-gray-300"
-                    }
-                  `}
-                >
-                  <div className="text-2xl mb-2">{area.emoji}</div>
-                  <div className="text-xs font-bold leading-tight">
-                    {area.label}
-                  </div>
-                </button>
-              ))}
+              {developmentAreas.map((area) => {
+                const areaIcon = AREA_ICONS[area.id] ?? {};
+                return (
+                  <button
+                    key={area.id}
+                    onClick={() => setActiveArea(area.id)}
+                    className={`
+                      p-4 rounded-2xl text-left transition-all border-2
+                      ${
+                        activeArea === area.id
+                          ? `${style.bg} ${style.border} ${style.text}`
+                          : "bg-white border-gray-200 text-gray-600 hover:border-gray-300"
+                      }
+                    `}
+                  >
+                    <div
+                      className={`w-9 h-9 ${areaIcon.bg} rounded-xl flex items-center justify-center mb-2`}
+                    >
+                      <FontAwesomeIcon
+                        icon={areaIcon.icon}
+                        className={`text-sm ${areaIcon.color}`}
+                      />
+                    </div>
+                    <div className="text-xs font-bold leading-tight">
+                      {area.label}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </>
         )}
@@ -208,10 +258,13 @@ export default function AgeGroupPage() {
             )}
             <button
               onClick={refetch}
-              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+              className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
               title="Yenilə"
             >
-              ↻
+              <FontAwesomeIcon
+                icon={faRotateRight}
+                className="text-xs text-gray-500"
+              />
             </button>
           </div>
         </div>
@@ -219,9 +272,7 @@ export default function AgeGroupPage() {
         {/* State-lər */}
         {loading && <LoadingState style={style} />}
         {error && <ErrorState message={error} onRetry={refetch} />}
-
         {!loading && !error && articles.length === 0 && <EmptyState />}
-
         {!loading && !error && articles.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {articles.map((article) => (
@@ -236,11 +287,10 @@ export default function AgeGroupPage() {
 
 /* ── Alt komponentlər ── */
 
-
 function ArticleCard({ article, style }) {
   const navigate = useNavigate();
   const { user } = useAuth();
- 
+
   function handleClick() {
     if (!user) {
       navigate("/login");
@@ -248,36 +298,48 @@ function ArticleCard({ article, style }) {
     }
     navigate(`/meqale/${article.id}`);
   }
- 
+
   return (
     <div
       onClick={handleClick}
-      className="bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group relative"
+      className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group shadow-sm"
     >
       <div className="flex items-start justify-between gap-3 mb-3">
-        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${style.badge} bg-opacity-20 ${style.text}`}>
-          {article.tag}
-        </span>
-        <span className="text-xs text-gray-400 whitespace-nowrap">{article.time} oxu</span>
+        {article.tag && (
+          <span
+            className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${style.badge} bg-opacity-20 ${style.text}`}
+          >
+            <FontAwesomeIcon icon={faTag} className="text-xs" />
+            {article.tag}
+          </span>
+        )}
+        {article.time && (
+          <span className="flex items-center gap-1 text-xs text-gray-400 whitespace-nowrap">
+            <FontAwesomeIcon icon={faClock} className="text-xs" />
+            {article.time}
+          </span>
+        )}
       </div>
-      <h3 className="text-gray-800 font-semibold text-base leading-snug group-hover:text-gray-900">
+
+      <h3 className="text-gray-800 font-semibold text-base leading-snug group-hover:text-gray-900 mb-3">
         {article.title}
       </h3>
- 
-      {/* Login olmayanlara kilit ikonu */}
-      {!user && (
-        <div className="mt-3 flex items-center gap-1.5 text-xs text-gray-400">
-          <span>🔒</span>
+
+      {!user ? (
+        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+          <FontAwesomeIcon icon={faLock} />
           <span>Oxumaq üçün daxil olun</span>
         </div>
-      )}
-      {user && (
-        <p className={`mt-3 text-sm font-medium ${style.text}`}>Oxu →</p>
+      ) : (
+        <p
+          className={`text-sm font-medium ${style.text} flex items-center gap-1.5`}
+        >
+          Oxu <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
+        </p>
       )}
     </div>
   );
 }
-
 
 function LoadingState({ style }) {
   return (
@@ -305,7 +367,10 @@ function LoadingState({ style }) {
 function ErrorState({ message, onRetry }) {
   return (
     <div className="text-center py-16">
-      <p className="text-4xl mb-3">⚠️</p>
+      <FontAwesomeIcon
+        icon={faTriangleExclamation}
+        className="text-4xl text-amber-400 mb-3"
+      />
       <p className="text-gray-500 mb-4">{message}</p>
       <button
         onClick={onRetry}
@@ -320,7 +385,10 @@ function ErrorState({ message, onRetry }) {
 function EmptyState() {
   return (
     <div className="text-center py-20 text-gray-400">
-      <p className="text-4xl mb-4">📭</p>
+      <FontAwesomeIcon
+        icon={faBoxOpen}
+        className="text-5xl text-gray-200 mb-4"
+      />
       <p>Bu bölmə üçün hələ məqalə yoxdur</p>
     </div>
   );

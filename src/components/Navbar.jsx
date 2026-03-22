@@ -8,8 +8,8 @@ import { faUser, faGear } from "@fortawesome/free-solid-svg-icons";
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const [scrolled,  setScrolled]  = useState(false);
-  const [menuOpen,  setMenuOpen]  = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { user, profile } = useAuth();
 
   useEffect(() => {
@@ -18,13 +18,22 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const isSpecialist = ["admin","Psixoloqlar","Loqopedlər",
-                        "Pedaqoqlar","EQ","IQ","Mentor"].includes(profile?.role);
+  const isSpecialist = [
+    "admin",
+    "Psixoloqlar",
+    "Loqopedlər",
+    "Pedaqoqlar",
+    "EQ",
+    "IQ",
+    "Mentor",
+  ].includes(profile?.role);
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-white shadow-md py-3" : "bg-white/90 backdrop-blur-sm py-2"
+        scrolled
+          ? "bg-white shadow-md py-3"
+          : "bg-white/90 backdrop-blur-sm py-2"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
@@ -69,13 +78,13 @@ export default function Navbar() {
             <>
               <button
                 onClick={() => navigate("/login")}
-                className="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                className="cursor-pointer text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
               >
                 Daxil ol
               </button>
               <button
                 onClick={() => navigate("/register")}
-                className="bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
+                className="cursor-pointer bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
               >
                 Qeydiyyat
               </button>
@@ -89,9 +98,15 @@ export default function Navbar() {
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Menyu"
         >
-          <div className={`w-5 h-0.5 bg-gray-700 mb-1.5 transition-all ${menuOpen ? "rotate-45 translate-y-2" : ""}`} />
-          <div className={`w-5 h-0.5 bg-gray-700 mb-1.5 transition-all ${menuOpen ? "opacity-0" : ""}`} />
-          <div className={`w-5 h-0.5 bg-gray-700 transition-all ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+          <div
+            className={`w-5 h-0.5 bg-gray-700 mb-1.5 transition-all ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
+          />
+          <div
+            className={`w-5 h-0.5 bg-gray-700 mb-1.5 transition-all ${menuOpen ? "opacity-0" : ""}`}
+          />
+          <div
+            className={`w-5 h-0.5 bg-gray-700 transition-all ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
+          />
         </button>
       </div>
 
@@ -105,14 +120,20 @@ export default function Navbar() {
               <>
                 {isSpecialist && (
                   <button
-                    onClick={() => { navigate("/admin"); setMenuOpen(false); }}
+                    onClick={() => {
+                      navigate("/admin");
+                      setMenuOpen(false);
+                    }}
                     className="flex items-center gap-2 text-sm text-gray-600 font-medium py-2"
                   >
                     <FontAwesomeIcon icon={faGear} /> Admin Panel
                   </button>
                 )}
                 <button
-                  onClick={() => { navigate("/profil"); setMenuOpen(false); }}
+                  onClick={() => {
+                    navigate("/profil");
+                    setMenuOpen(false);
+                  }}
                   className="flex items-center gap-2 bg-emerald-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl"
                 >
                   <FontAwesomeIcon icon={faUser} />
@@ -122,13 +143,19 @@ export default function Navbar() {
             ) : (
               <>
                 <button
-                  onClick={() => { navigate("/login"); setMenuOpen(false); }}
+                  onClick={() => {
+                    navigate("/login");
+                    setMenuOpen(false);
+                  }}
                   className="text-sm text-gray-600 font-medium py-2"
                 >
                   Daxil ol
                 </button>
                 <button
-                  onClick={() => { navigate("/register"); setMenuOpen(false); }}
+                  onClick={() => {
+                    navigate("/register");
+                    setMenuOpen(false);
+                  }}
                   className="bg-emerald-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl"
                 >
                   Qeydiyyat

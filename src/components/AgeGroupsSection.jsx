@@ -1,46 +1,62 @@
 import { useNavigate } from "react-router-dom";
 import { ageGroups } from "../data/data";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSeedling,
+  faLeaf,
+  faTree,
+  faGraduationCap,
+  faArrowRight,
+} from "@fortawesome/free-solid-svg-icons";
 
 const AGE_STYLES = {
   "1-6": {
-    bg:        "bg-amber-50",
-    border:    "border-amber-200",
-    badge:     "bg-amber-100 text-amber-700",
-    btnBg:     "bg-amber-400 hover:bg-amber-500",
-    btnText:   "text-white",
-    text:      "text-amber-600",
-    dot:       "bg-amber-400",
-    glow:      "hover:shadow-amber-100",
+    bg: "bg-amber-50",
+    border: "border-amber-200",
+    badge: "bg-amber-100 text-amber-700",
+    btnBg: "bg-amber-400 hover:bg-amber-500",
+    btnText: "text-white",
+    text: "text-amber-600",
+    dot: "bg-amber-400",
+    glow: "hover:shadow-amber-100",
+    icon: faSeedling,
+    iconBg: "bg-amber-400",
   },
   "6-10": {
-    bg:        "bg-emerald-50",
-    border:    "border-emerald-200",
-    badge:     "bg-emerald-100 text-emerald-700",
-    btnBg:     "bg-emerald-500 hover:bg-emerald-600",
-    btnText:   "text-white",
-    text:      "text-emerald-600",
-    dot:       "bg-emerald-400",
-    glow:      "hover:shadow-emerald-100",
+    bg: "bg-emerald-50",
+    border: "border-emerald-200",
+    badge: "bg-emerald-100 text-emerald-700",
+    btnBg: "bg-emerald-500 hover:bg-emerald-600",
+    btnText: "text-white",
+    text: "text-emerald-600",
+    dot: "bg-emerald-400",
+    glow: "hover:shadow-emerald-100",
+    icon: faLeaf,
+    iconBg: "bg-emerald-400",
   },
   "11-17": {
-    bg:        "bg-blue-50",
-    border:    "border-blue-200",
-    badge:     "bg-blue-100 text-blue-700",
-    btnBg:     "bg-blue-500 hover:bg-blue-600",
-    btnText:   "text-white",
-    text:      "text-blue-600",
-    dot:       "bg-blue-400",
-    glow:      "hover:shadow-blue-100",
+    bg: "bg-blue-50",
+    border: "border-blue-200",
+    badge: "bg-blue-100 text-blue-700",
+    btnBg: "bg-blue-500 hover:bg-blue-600",
+    btnText: "text-white",
+    text: "text-blue-600",
+    dot: "bg-blue-400",
+    glow: "hover:shadow-blue-100",
+    icon: faTree,
+    iconBg: "bg-blue-400",
   },
   "18+": {
-    bg:        "bg-violet-50",
-    border:    "border-violet-200",
-    badge:     "bg-violet-100 text-violet-700",
-    btnBg:     "bg-violet-500 hover:bg-violet-600",
-    btnText:   "text-white",
-    text:      "text-violet-600",
-    dot:       "bg-violet-400",
-    glow:      "hover:shadow-violet-100",
+    bg: "bg-violet-50",
+    border: "border-violet-200",
+    badge: "bg-violet-100 text-violet-700",
+    btnBg: "bg-violet-500 hover:bg-violet-600",
+    btnText: "text-white",
+    text: "text-violet-600",
+    dot: "bg-violet-400",
+    glow: "hover:shadow-violet-100",
+    icon: faGraduationCap,
+    iconBg: "bg-violet-400",
   },
 };
 
@@ -50,11 +66,10 @@ function AgeGroupsSection() {
   return (
     <section className="py-20 px-6 bg-white">
       <div className="max-w-7xl mx-auto">
-
         {/* Başlıq */}
         <div className="text-center mb-14">
-          <p className="text-emerald-600 font-semibold text-sm uppercase tracking-widest mb-3">
-            İnkişaf xəritəsi
+          <p className="text-emerald-600 font-semibold text-sm  tracking-widest mb-3">
+            İNKİŞAF XƏRİTƏSİ
           </p>
           <h2
             className="text-3xl md:text-4xl font-bold text-gray-900 mb-4"
@@ -83,9 +98,16 @@ function AgeGroupsSection() {
                 `}
                 style={{ animationDelay: `${index * 80}ms` }}
               >
-                {/* Yuxarı — emoji + dot */}
+                {/* Yuxarı — ikon + dot */}
                 <div className="flex items-start justify-between mb-5">
-                  <div className="text-4xl">{g.emoji}</div>
+                  <div
+                    className={`w-12 h-12 ${s.iconBg} rounded-2xl flex items-center justify-center shadow-sm`}
+                  >
+                    <FontAwesomeIcon
+                      icon={s.icon}
+                      className="text-white text-xl"
+                    />
+                  </div>
                   <span className={`w-2 h-2 rounded-full ${s.dot} mt-1.5`} />
                 </div>
 
@@ -103,7 +125,9 @@ function AgeGroupsSection() {
                 </div>
 
                 {/* Ayırıcı xətt */}
-                <div className={`h-px ${s.border} bg-current opacity-30 mb-3`} />
+                <div
+                  className={`h-px ${s.border} bg-current opacity-30 mb-3`}
+                />
 
                 {/* Təsvir */}
                 <p className="text-gray-500 text-xs leading-relaxed mb-4 flex-1">
@@ -121,7 +145,9 @@ function AgeGroupsSection() {
                     </span>
                   ))}
                   {g.categories.length > 3 && (
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${s.badge} opacity-60`}>
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full font-medium ${s.badge} opacity-60`}
+                    >
                       +{g.categories.length - 3}
                     </span>
                   )}
@@ -132,11 +158,12 @@ function AgeGroupsSection() {
                   className={`
                     w-full ${s.btnBg} ${s.btnText}
                     font-semibold py-2.5 rounded-xl text-sm
-                    transition-all duration-200
-                    group-hover:shadow-md
+                    transition-all duration-200 group-hover:shadow-md
+                    flex items-center justify-center gap-2
                   `}
                 >
-                  Bölməyə keç →
+                  Bölməyə keç
+                  <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
                 </button>
               </div>
             );

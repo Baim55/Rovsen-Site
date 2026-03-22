@@ -1,3 +1,4 @@
+// src/components/Navlist.jsx
 import { Link } from "react-router-dom";
 import { navLinks } from "../data/data";
 
@@ -15,14 +16,7 @@ export default function NavList({ mobile = false, onClose }) {
             {link.label}
           </Link>
         ))}
-        <div className="pt-3 flex gap-3">
-          <button className="flex-1 text-sm border border-gray-200 text-gray-700 py-2.5 rounded-xl font-medium">
-            Daxil ol
-          </button>
-          <button className="flex-1 bg-emerald-500 text-white text-sm py-2.5 rounded-xl font-semibold">
-            Qeydiyyat
-          </button>
-        </div>
+        {/* Auth düymələri Navbar-dan gəlir — burada yoxdur */}
       </div>
     );
   }
