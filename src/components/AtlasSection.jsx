@@ -81,7 +81,7 @@ export default function AtlasSection() {
         {/* Başlıq */}
         <div className="text-center mb-14">
           <p className="text-emerald-600 font-semibold text-sm tracking-widest mb-3">
-            Fərdi tövsiyə
+            FƏRDİ TÖVSİYƏ
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Georgia', serif" }}>
             Sizə uyğun inkişaf yolu
