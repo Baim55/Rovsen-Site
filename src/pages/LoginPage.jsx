@@ -4,16 +4,16 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { supabase } from "../lib/supabase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash, faLeaf } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash, faLeaf, faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 
 export default function LoginPage() {
   const { signIn } = useAuth();
-  const navigate = useNavigate();
+  const navigate   = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPw, setShowPw] = useState(false);
-  const [error, setError] = useState(null);
+  const [email,   setEmail]   = useState("");
+  const [password,setPassword]= useState("");
+  const [showPw,  setShowPw]  = useState(false);
+  const [error,   setError]   = useState(null);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
@@ -23,25 +23,15 @@ export default function LoginPage() {
     try {
       await signIn(email, password);
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      const { data: profile } = await supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data: profile }  = await supabase
         .from("profiles")
         .select("role")
         .eq("id", user.id)
         .single();
 
-      const isSpecialist = [
-        "admin",
-        "Psixoloqlar",
-        "Loqopedlər",
-        "Pedaqoqlar",
-        "EQ",
-        "IQ",
-        "Mentor",
-      ].includes(profile?.role);
-      navigate(isSpecialist ? "/admin" : "/");
+      navigate(profile?.role === "admin" ? "/admin" : "/");
+
     } catch (err) {
       if (err.message?.includes("Email not confirmed")) {
         setError("Email ünvanınızı təsdiqləyin — göndərilən linkə klikləyin");
@@ -62,14 +52,12 @@ export default function LoginPage() {
 
       <div className="relative w-full max-w-md">
         <div className="bg-white rounded-3xl shadow-xl shadow-emerald-100/50 border border-emerald-100 p-8">
+
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-500 rounded-2xl mb-4 shadow-lg shadow-emerald-200">
               <FontAwesomeIcon icon={faLeaf} className="text-white text-2xl" />
             </div>
-            <h1
-              className="text-2xl font-bold text-gray-900"
-              style={{ fontFamily: "'Georgia', serif" }}
-            >
+            <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Georgia', serif" }}>
               Xoş gəldiniz
             </h1>
             <p className="text-gray-500 text-sm mt-1">
@@ -78,22 +66,24 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Email */}
+
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
                 Email
               </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="email@example.com"
-                className="w-full px-4 py-3 rounded-xl border-2 border-gray-100 focus:border-emerald-400 focus:outline-none transition-colors text-gray-800 bg-gray-50 focus:bg-white text-sm"
-              />
+              <div className="relative">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="email@example.com"
+                  className="w-full px-4 py-3 pl-11 rounded-xl border-2 border-gray-100 focus:border-emerald-400 focus:outline-none transition-colors text-gray-800 bg-gray-50 focus:bg-white text-sm"
+                />
+                <FontAwesomeIcon icon={faEnvelope} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
+              </div>
             </div>
 
-            {/* Şifrə */}
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
                 Şifrə
@@ -105,8 +95,9 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 pr-12 rounded-xl border-2 border-gray-100 focus:border-emerald-400 focus:outline-none transition-colors text-gray-800 bg-gray-50 focus:bg-white text-sm"
+                  className="w-full px-4 py-3 pl-11 pr-12 rounded-xl border-2 border-gray-100 focus:border-emerald-400 focus:outline-none transition-colors text-gray-800 bg-gray-50 focus:bg-white text-sm"
                 />
+                <FontAwesomeIcon icon={faLock} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
@@ -134,18 +125,13 @@ export default function LoginPage() {
 
           <p className="text-center text-sm text-gray-500 mt-6">
             Hesabınız yoxdur?{" "}
-            <Link
-              to="/register"
-              className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors"
-            >
+            <Link to="/register" className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors">
               Qeydiyyat
             </Link>
           </p>
         </div>
 
-        <p className="text-center text-xs text-gray-400 mt-4">
-          © 2025 İnkişaf Akademiyası
-        </p>
+        <p className="text-center text-xs text-gray-400 mt-4">© 2025 İnkişaf Akademiyası</p>
       </div>
     </div>
   );

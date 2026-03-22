@@ -10,12 +10,6 @@ import {
   faUserGraduate,
   faUsers,
   faBriefcase,
-  faBrain,
-  faComments,
-  faChalkboardTeacher,
-  faHeart,
-  faPuzzlePiece,
-  faStar,
   faCamera,
   faLeaf,
 } from "@fortawesome/free-solid-svg-icons";
@@ -55,51 +49,6 @@ const BASE_ROLES = [
   },
 ];
 
-const SPECIALIST_ROLES = [
-  {
-    value: "Psixoloqlar",
-    label: "Psixoloq",
-    icon: faBrain,
-    color: "text-purple-500",
-    bg: "bg-purple-50",
-  },
-  {
-    value: "Loqopedlər",
-    label: "Loqoped",
-    icon: faComments,
-    color: "text-blue-500",
-    bg: "bg-blue-50",
-  },
-  {
-    value: "Pedaqoqlar",
-    label: "Pedaqoq",
-    icon: faChalkboardTeacher,
-    color: "text-emerald-500",
-    bg: "bg-emerald-50",
-  },
-  {
-    value: "EQ",
-    label: "EQ Mütəxəssisi",
-    icon: faHeart,
-    color: "text-rose-500",
-    bg: "bg-rose-50",
-  },
-  {
-    value: "IQ",
-    label: "IQ Mütəxəssisi",
-    icon: faPuzzlePiece,
-    color: "text-amber-500",
-    bg: "bg-amber-50",
-  },
-  {
-    value: "Mentor",
-    label: "Mentor",
-    icon: faStar,
-    color: "text-yellow-500",
-    bg: "bg-yellow-50",
-  },
-];
-
 export default function RegisterPage() {
   const [form, setForm] = useState({
     fullName: "",
@@ -107,7 +56,6 @@ export default function RegisterPage() {
     password: "",
     password2: "",
     baseRole: "",
-    specRole: "",
   });
   const [avatar, setAvatar] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -128,18 +76,14 @@ export default function RegisterPage() {
     setPreview(URL.createObjectURL(file));
   }
 
-  const finalRole =
-    form.baseRole === "Mütəxəssis" ? form.specRole : form.baseRole;
+  // Role həmişə baseRole olur — mütəxəssis sahəsi seçilmir
+  const finalRole = form.baseRole;
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
     if (!form.fullName || !form.email || !form.password || !form.baseRole) {
       setError("Bütün sahələri doldurun");
-      return;
-    }
-    if (form.baseRole === "Mütəxəssis" && !form.specRole) {
-      setError("Mütəxəssis növünü seçin");
       return;
     }
     if (form.password !== form.password2) {
@@ -174,6 +118,7 @@ export default function RegisterPage() {
           avatarUrl = urlData.publicUrl;
         }
       }
+
       const { error: profileError } = await supabase.from("profiles").insert({
         id: userId,
         full_name: form.fullName,
@@ -240,7 +185,6 @@ export default function RegisterPage() {
             {/* ── Sol panel ── */}
             <div className="lg:col-span-2 bg-gradient-to-b from-emerald-500 to-teal-600 p-8 flex flex-col justify-between text-white">
               <div>
-                {/* Logo */}
                 <div className="flex items-center gap-3 mb-8">
                   <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
                     <FontAwesomeIcon
@@ -263,7 +207,6 @@ export default function RegisterPage() {
                   Yaşınıza və sahənizə uyğun resurslardan yararlanın.
                 </p>
 
-                {/* Avatar */}
                 <label className="cursor-pointer block">
                   <div className="w-20 h-20 rounded-2xl border-2 border-dashed border-white/40 hover:border-white/80 transition-colors overflow-hidden flex items-center justify-center bg-white/10 mb-2">
                     {preview ? (
@@ -323,17 +266,14 @@ export default function RegisterPage() {
                 {/* Rol seçimi */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 mb-2 tracking-wide">
-                    Siz kimsiniz? 
+                    Siz kimsiniz? *
                   </label>
                   <div className="grid grid-cols-2 gap-2">
                     {BASE_ROLES.map((r) => (
                       <button
                         key={r.value}
                         type="button"
-                        onClick={() => {
-                          handleChange("baseRole", r.value);
-                          handleChange("specRole", "");
-                        }}
+                        onClick={() => handleChange("baseRole", r.value)}
                         className={`flex items-center gap-2.5 p-3 rounded-xl border-2 transition-all text-left ${
                           form.baseRole === r.value
                             ? "border-emerald-400 bg-emerald-50 text-emerald-700"
@@ -356,39 +296,6 @@ export default function RegisterPage() {
                     ))}
                   </div>
                 </div>
-
-                {/* Mütəxəssis sahəsi */}
-                {form.baseRole === "Mütəxəssis" && (
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">
-                      Sahəniz *
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {SPECIALIST_ROLES.map((r) => (
-                        <button
-                          key={r.value}
-                          type="button"
-                          onClick={() => handleChange("specRole", r.value)}
-                          className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border-2 text-xs font-semibold transition-all ${
-                            form.specRole === r.value
-                              ? "border-emerald-400 bg-emerald-50 text-emerald-700"
-                              : "border-gray-100 text-gray-600 hover:border-emerald-200"
-                          }`}
-                        >
-                          <div
-                            className={`w-6 h-6 rounded-md ${form.specRole === r.value ? r.bg : "bg-gray-100"} flex items-center justify-center flex-shrink-0`}
-                          >
-                            <FontAwesomeIcon
-                              icon={r.icon}
-                              className={`text-xs ${form.specRole === r.value ? r.color : "text-gray-400"}`}
-                            />
-                          </div>
-                          {r.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 {/* Ad Soyad + Email */}
                 <div className="grid grid-cols-2 gap-3">
