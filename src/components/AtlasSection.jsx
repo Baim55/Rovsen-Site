@@ -121,7 +121,7 @@ export default function AtlasSection() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {STEPS[step].options.map((opt) => {
                       const isSelected = step === "age" ? age === opt.value : role === opt.value;
                       return (
