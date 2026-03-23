@@ -63,7 +63,7 @@ function HeroSection() {
           {/* ── Sol hissə ── */}
           <div>
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-600 text-[18px] font-semibold px-4 py-2 rounded-full mb-8 shadow-sm">
+            <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-600 text-xs md:text-[18px] font-semibold px-4 py-2 rounded-full mb-8 shadow-sm">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               Rövşən İsmayılov adına İnkişaf Akademiyası
             </div>
