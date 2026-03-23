@@ -6,7 +6,7 @@ export default function Logo() {
       <img
         src={logo}
         alt="İnkişaf Akademiyası"
-        className="h-20 w-auto object-contain"
+        className="h-27 w-auto object-contain"
       />
     </a>
   );
