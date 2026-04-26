@@ -123,6 +123,7 @@ export default function RegisterPage() {
         id: userId,
         full_name: form.fullName,
         role: finalRole,
+        email: form.email,
         avatar_url: avatarUrl,
       });
       if (profileError) throw profileError;
@@ -301,7 +302,7 @@ export default function RegisterPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">
-                      Ad Soyad *
+                      Ad Soyad
                     </label>
                     <input
                       type="text"
@@ -314,7 +315,7 @@ export default function RegisterPage() {
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">
-                      Email *
+                      Email
                     </label>
                     <input
                       type="email"
@@ -331,7 +332,7 @@ export default function RegisterPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">
-                      Şifrə *
+                      Şifrə
                     </label>
                     <div className="relative">
                       <input
@@ -355,7 +356,7 @@ export default function RegisterPage() {
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">
-                      Təkrar *
+                      Təkrar
                     </label>
                     <div className="relative">
                       <input

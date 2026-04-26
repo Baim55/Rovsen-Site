@@ -118,7 +118,7 @@ export default function ArticlePage() {
       {/* ── Hero ── */}
       <div className={`${style.bg} border-b-2 ${style.border} py-10 px-6`}>
         <div className="max-w-3xl mx-auto">
-           <button
+          <button
             onClick={() => navigate(-1)}
             className={`cursor-pointer inline-flex items-center gap-2 ${style.text} font-semibold text-sm hover:opacity-80 transition-opacity mb-8`}
           >
@@ -202,9 +202,7 @@ export default function ArticlePage() {
         )}
 
         {/* ── Geri düyməsi ── */}
-        <div className="mt-12 border-t border-gray-200 ">
-         
-        </div>
+        <div className="mt-12 border-t border-gray-200 "></div>
 
         {/* ── Şərhlər bölməsi ── */}
         <CommentsSection
@@ -254,6 +252,8 @@ function CommentsSection({ articleId, user, profile, style }) {
         article_id: articleId,
         user_id: user.id,
         content: newComment.trim(),
+        full_name: profile?.full_name || "",
+        email: profile?.email || user.email,
       })
       .select("*, profiles(full_name, avatar_url, role)")
       .single();
@@ -428,9 +428,9 @@ function CommentsSection({ articleId, user, profile, style }) {
                       )}
                     </div>
                   </div>
-                 <p className="text-sm text-gray-700 leading-relaxed break-all">
-  {c.content}
-</p>
+                  <p className="text-sm text-gray-700 leading-relaxed break-all">
+                    {c.content}
+                  </p>
                 </div>
               </div>
             );
