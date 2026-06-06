@@ -64,11 +64,11 @@ function AgeGroupsSection() {
   const navigate = useNavigate();
 
   return (
-    <section className="py-20 px-6 bg-white">
+    <section id="yas-qruplari" className="py-20 px-6 bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Başlıq */}
         <div className="text-center mb-14">
-          <p className="text-emerald-600 font-semibold text-sm  tracking-widest mb-3">
+          <p className="text-emerald-600 font-semibold text-sm tracking-widest mb-3">
             İNKİŞAF XƏRİTƏSİ
           </p>
           <h2

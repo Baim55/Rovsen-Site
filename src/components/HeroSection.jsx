@@ -40,6 +40,32 @@ const AGE_NODES = [
 function HeroSection() {
   const navigate = useNavigate();
 
+  function scrollToAgeGroups() {
+    const el = document.getElementById("yas-qruplari");
+    if (!el) return;
+
+    const navbarHeight = 80;
+    const start = window.scrollY;
+    const target = el.getBoundingClientRect().top + window.scrollY - navbarHeight;
+    const distance = target - start;
+    const duration = 1000;
+    let startTime = null;
+
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      window.scrollTo(0, start + distance * easeInOutCubic(progress));
+      if (progress < 1) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+  }
+
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-slate-50 via-white to-emerald-50">
       {/* Dekorativ arxa fon */}
@@ -106,7 +132,7 @@ function HeroSection() {
             {/* Düymələr */}
             <div className="flex flex-col sm:flex-row gap-4">
               <button
-                onClick={() => navigate("/academy")}
+                onClick={scrollToAgeGroups}
                 className="inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-8 py-4 rounded-2xl transition-all duration-200 shadow-lg shadow-emerald-200 hover:shadow-emerald-300 hover:-translate-y-0.5"
               >
                 Yaş qruplarını araşdır
@@ -123,22 +149,6 @@ function HeroSection() {
                 Mütəxəssislə görüş
               </button>
             </div>
-
-            {/* Statistika
-            <div className="flex gap-8 mt-12 pt-8 border-t border-gray-100">
-              {[
-                { n: "500+", l: "Resurs",      color: "text-emerald-500" },
-                { n: "12+",  l: "Mütəxəssis",  color: "text-blue-500" },
-                { n: "1000+",l: "Ailə",         color: "text-amber-500" },
-              ].map(({ n, l, color }) => (
-                <div key={l}>
-                  <div className={`text-2xl font-bold ${color}`} style={{ fontFamily: "'Georgia', serif" }}>
-                    {n}
-                  </div>
-                  <div className="text-sm text-gray-400">{l}</div>
-                </div>
-              ))}
-            </div> */}
           </div>
 
           {/* ── Sağ hissə — interaktiv dairə ── */}
@@ -162,6 +172,7 @@ function HeroSection() {
               {AGE_NODES.map((node) => (
                 <div
                   key={node.label}
+                  onClick={scrollToAgeGroups}
                   className={`absolute ${node.cls} w-16 h-16 bg-white border-2 border-gray-100 rounded-2xl flex flex-col items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer`}
                 >
                   <div
@@ -180,7 +191,7 @@ function HeroSection() {
             </div>
 
             {/* İnkişaf yolu indikatoru */}
-            <div className="flex items-center gap-2  bg-white border border-gray-100 rounded-2xl px-6 py-3 shadow-md">
+            <div className="flex items-center gap-2 bg-white border border-gray-100 rounded-2xl px-6 py-3 shadow-md">
               {[
                 { icon: faSeedling, color: "text-amber-500" },
                 { icon: faLeaf, color: "text-emerald-500" },

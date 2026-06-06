@@ -30,24 +30,25 @@ const STEPS = {
 };
 
 const RESULTS = {
-  "1-6_usaq":         { title: "Oyun əsaslı inkişaf",       desc: "1–6 yaş üçün oyun, musiqi və duyusal fəaliyyətlər",        icon: faSeedling,     color: "text-amber-500",   link: "/yas/1-6" },
-  "1-6_valideyn":     { title: "Erkən yaş valideyn bələdçisi", desc: "Uşağınızın ilk illərini necə dəstəkləyəcəyinizi öyrənin", icon: faHeart,        color: "text-rose-500",    link: "/yas/1-6" },
-  "1-6_telebe":       { title: "Erkən inkişaf resursları",   desc: "1–6 yaş inkişafı haqqında elmi məqalələr",                 icon: faSeedling,     color: "text-amber-500",   link: "/yas/1-6" },
-  "1-6_mutexessis":   { title: "Mütəxəssis resursları",      desc: "Pedaqoq, psixoloq və loqopedlər üçün metodikalar",         icon: faBriefcase,    color: "text-violet-500",  link: "/yas/1-6" },
-  "6-10_usaq":        { title: "Akademik inkişaf",           desc: "Oxu, riyaziyyat və yaradıcı düşüncə oyunları",             icon: faLeaf,         color: "text-emerald-500", link: "/yas/6-10" },
-  "6-10_valideyn":    { title: "Məktəb dövrü dəstəyi",      desc: "Övladınızın məktəb həyatına uyğunlaşmasına kömək",          icon: faHeart,        color: "text-rose-500",    link: "/yas/6-10" },
-  "6-10_telebe":      { title: "İbtidai dövr resursları",   desc: "6–10 yaş inkişafı haqqında məqalələr",                     icon: faLeaf,         color: "text-emerald-500", link: "/yas/6-10" },
-  "6-10_mutexessis":  { title: "İbtidai dövr metodikaları", desc: "Sinif idarəetməsi və fərdi yanaşma strategiyaları",         icon: faBriefcase,    color: "text-violet-500",  link: "/yas/6-10" },
-  "11-17_usaq":       { title: "Yeniyetmə inkişafı",        desc: "Özünüdərk, liderlik və akademik uğur məqalələri",          icon: faTree,         color: "text-blue-500",    link: "/yas/11-17" },
-  "11-17_valideyn":   { title: "Yeniyetmə ilə ünsiyyət",    desc: "Münaqişəsiz ünsiyyət qurma praktiki tövsiyələri",          icon: faHeart,        color: "text-rose-500",    link: "/yas/11-17" },
-  "11-17_telebe":     { title: "Yeniyetmə inkişafı",        desc: "11–17 yaş üçün akademik və sosial inkişaf məqalələri",     icon: faTree,         color: "text-blue-500",    link: "/yas/11-17" },
-  "11-17_mutexessis": { title: "Yeniyetmə psixologiyası",   desc: "Müasir yanaşmalar və terapevtik metodlar",                 icon: faBrain,        color: "text-purple-500",  link: "/yas/11-17" },
-  "18+_usaq":         { title: "Gənclik inkişafı",          desc: "18+ yaş üçün özünüidarə və inkişaf resursları",            icon: faGraduationCap,color: "text-violet-500",  link: "/yas/18+" },
-  "18+_valideyn":     { title: "Gənc yetkinlərlə münasibət",desc: "18+ övladınızla sağlam münasibət qurmaq",                  icon: faHeart,        color: "text-rose-500",    link: "/yas/18+" },
-  "18+_telebe":       { title: "Akademik uğur",             desc: "Öyrənmə strategiyaları və karyera planlaması",             icon: faUserGraduate, color: "text-blue-500",    link: "/yas/18+" },
-  "18+_mutexessis":   { title: "Professional inkişaf",      desc: "Mentor, kouç və mütəxəssislər üçün resurslar",             icon: faBriefcase,    color: "text-violet-500",  link: "/yas/18+" },
-  "default":          { title: "İnkişaf resursları",        desc: "Sizə uyğun məqalə və resursları kəşf edin",               icon: faBookOpen,     color: "text-emerald-500", link: "/yas/1-6" },
+  "1-6_usaq":         { title: "Oyun əsaslı inkişaf",          desc: "1–6 yaş üçün oyun, musiqi və duyusal fəaliyyətlər",         icon: faSeedling,      color: "text-amber-500",   category: "Uşaqlar"     },
+  "1-6_valideyn":     { title: "Erkən yaş valideyn bələdçisi",  desc: "Uşağınızın ilk illərini necə dəstəkləyəcəyinizi öyrənin",   icon: faHeart,         color: "text-rose-500",    category: "Valideynlər" },
+  "1-6_telebe":       { title: "Erkən inkişaf resursları",      desc: "1–6 yaş inkişafı haqqında elmi məqalələr",                  icon: faSeedling,      color: "text-amber-500",   category: "Uşaqlar"     },
+  "1-6_mutexessis":   { title: "Mütəxəssis resursları",         desc: "Pedaqoq, psixoloq və loqopedlər üçün metodikalar",          icon: faBriefcase,     color: "text-violet-500",  category: "Pedaqoqlar"  },
+  "6-10_usaq":        { title: "Akademik inkişaf",              desc: "Oxu, riyaziyyat və yaradıcı düşüncə oyunları",              icon: faLeaf,          color: "text-emerald-500", category: "Uşaqlar"     },
+  "6-10_valideyn":    { title: "Məktəb dövrü dəstəyi",         desc: "Övladınızın məktəb həyatına uyğunlaşmasına kömək",          icon: faHeart,         color: "text-rose-500",    category: "Valideynlər" },
+  "6-10_telebe":      { title: "İbtidai dövr resursları",       desc: "6–10 yaş inkişafı haqqında məqalələr",                     icon: faLeaf,          color: "text-emerald-500", category: "Uşaqlar"     },
+  "6-10_mutexessis":  { title: "İbtidai dövr metodikaları",    desc: "Sinif idarəetməsi və fərdi yanaşma strategiyaları",         icon: faBriefcase,     color: "text-violet-500",  category: "Pedaqoqlar"  },
+  "11-17_usaq":       { title: "Yeniyetmə inkişafı",           desc: "Özünüdərk, liderlik və akademik uğur məqalələri",           icon: faTree,          color: "text-blue-500",    category: "Uşaqlar"     },
+  "11-17_valideyn":   { title: "Yeniyetmə ilə ünsiyyət",       desc: "Münaqişəsiz ünsiyyət qurma praktiki tövsiyələri",           icon: faHeart,         color: "text-rose-500",    category: "Valideynlər" },
+  "11-17_telebe":     { title: "Yeniyetmə inkişafı",           desc: "11–17 yaş üçün akademik və sosial inkişaf məqalələri",      icon: faTree,          color: "text-blue-500",    category: "EQ"          },
+  "11-17_mutexessis": { title: "Yeniyetmə psixologiyası",      desc: "Müasir yanaşmalar və terapevtik metodlar",                  icon: faBrain,         color: "text-purple-500",  category: "Psixoloqlar" },
+  "18+_usaq":         { title: "Gənclik inkişafı",             desc: "18+ yaş üçün özünüidarə və inkişaf resursları",             icon: faGraduationCap, color: "text-violet-500",  category: "EQ"          },
+  "18+_valideyn":     { title: "Gənc yetkinlərlə münasibət",   desc: "18+ övladınızla sağlam münasibət qurmaq",                   icon: faHeart,         color: "text-rose-500",    category: "Valideynlər" },
+  "18+_telebe":       { title: "Akademik uğur",                desc: "Öyrənmə strategiyaları və karyera planlaması",              icon: faUserGraduate,  color: "text-blue-500",    category: "IQ"          },
+  "18+_mutexessis":   { title: "Professional inkişaf",         desc: "Mentor, kouç və mütəxəssislər üçün resurslar",              icon: faBriefcase,     color: "text-violet-500",  category: "Mentorlar"   },
+  "default":          { title: "İnkişaf resursları",           desc: "Sizə uyğun məqalə və resursları kəşf edin",                icon: faBookOpen,      color: "text-emerald-500", category: "Hamısı"      },
 };
+
 
 export default function AtlasSection() {
   const navigate = useNavigate();
@@ -173,7 +174,7 @@ export default function AtlasSection() {
 
                   <div className="flex gap-3 justify-center">
                     <button
-                      onClick={() => navigate(result.link)}
+                      onClick={() => navigate("/resources", { state: { category: result.category } })}
                       className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-all shadow-md hover:-translate-y-0.5"
                     >
                       Məqalələrə keç

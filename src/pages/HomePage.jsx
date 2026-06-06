@@ -1,6 +1,6 @@
 import HeroSection from "../components/HeroSection";
 import AgeGroupsSection from "../components/AgeGroupsSection";
-import AtlasSection from "../components/AtlasSection";
+// import AtlasSection from "../components/AtlasSection";
 import TrainingsSection from "../components/TrainingsSection";
 import ArticlesSection from "../components/ArticlesSection";
 import ResourcesSection from "../components/ResourcesSection";
@@ -11,10 +11,10 @@ export default function HomePage() {
     <>
       <HeroSection />
       <AgeGroupsSection />
-      <AtlasSection />
+      {/* <AtlasSection /> */}
       <TrainingsSection />
-      <ArticlesSection />
       <ResourcesSection />
+      <ArticlesSection />
       {/* <TestimonialsSection /> */}
     </>
   );

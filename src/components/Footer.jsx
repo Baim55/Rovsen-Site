@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import logo from "../assets/img/logo1.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faLeaf,
   faEnvelope,
   faPhone,
   faArrowRight,
+  faLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faInstagram,
@@ -43,7 +43,25 @@ const SOCIAL = [
     label: "Facebook",
   },
   { icon: faLinkedin, href: "#", label: "LinkedIn" },
-  { icon: faYoutube, href: "#", label: "YouTube" },
+  { icon: faYoutube,  href: "#", label: "YouTube"  },
+];
+
+const CONTACT_ITEMS = [
+  {
+    icon: faEnvelope,
+    href: "mailto:rovshan.academy@gmail.com",
+    text: "rovshan.academy@gmail.com",
+  },
+  {
+    icon: faPhone,
+    href: "tel:+994506773427",
+    text: "+994 50 677 34 27",
+  },
+  {
+    icon: faLocationDot,
+    href: "#",
+    text: "Binəqədi r., Ə.Məmmədov 7",
+  },
 ];
 
 export default function Footer() {
@@ -51,22 +69,17 @@ export default function Footer() {
     <footer className="bg-white border-t border-gray-100 text-gray-500">
       {/* ── Əsas hissə ── */}
       <div className="max-w-7xl mx-auto px-6 py-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+
         {/* Brend */}
         <div className="lg:col-span-1">
-          <div className="flex items-center gap-2.5 mb-4">
-            <div className="w-9 h-9   flex items-center justify-center ">
-              <a href="/" className="flex items-center gap-3 group">
-                <img
-                  src={logo}
-                  alt="İnkişaf Akademiyası"
-                  className="h-20 md:h-27 w-auto object-contain"
-                />
-              </a>
-            </div>
-            <span className="text-gray-900 font-bold text-sm leading-tight">
-              Rovshan Academy
-            </span>
-          </div>
+          <a href="/" className="inline-block mb-4">
+            <img
+              src={logo}
+              alt="Rovshan Academy"
+              className="h-14 w-auto object-contain"
+            />
+          </a>
+          <p className="text-sm font-bold text-gray-800 mb-2">Rovshan Academy</p>
           <p className="text-sm leading-relaxed mb-6 text-gray-400">
             Uşaqlar, yeniyetmələr, valideynlər və mütəxəssislər üçün elmi əsaslı
             inkişaf proqramları.
@@ -144,52 +157,23 @@ export default function Footer() {
             Əlaqə
           </h4>
           <ul className="space-y-3">
-            <li>
-              <a
-                href="mailto:info@inkishaf.az"
-                className="flex items-center gap-3 text-sm text-gray-400 hover:text-emerald-500 transition-colors group"
-              >
-                <div className="w-8 h-8 rounded-lg bg-emerald-50 group-hover:bg-emerald-100 flex items-center justify-center transition-colors flex-shrink-0">
-                  <FontAwesomeIcon
-                    icon={faEnvelope}
-                    className="text-xs text-emerald-500"
-                  />
-                </div>
-                rovshan.academy@gmail.com
-              </a>
-            </li>
-            <li>
-              <a
-                href="tel:+994506773427"
-                className="flex items-center gap-3 text-sm text-gray-400 hover:text-emerald-500 transition-colors group"
-              >
-                <div className="w-8 h-8 rounded-lg bg-emerald-50 group-hover:bg-emerald-100 flex items-center justify-center transition-colors flex-shrink-0">
-                  <FontAwesomeIcon
-                    icon={faPhone}
-                    className="text-xs text-emerald-500"
-                  />
-                </div>
-                +994 50 677 34 27
-              </a>
-            </li>
+            {CONTACT_ITEMS.map((item) => (
+              <li key={item.text}>
+                <a
+                  href={item.href}
+                  className="flex items-center gap-3 text-sm text-gray-400 hover:text-emerald-500 transition-colors group"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 group-hover:bg-emerald-50 group-hover:border-emerald-100 flex items-center justify-center transition-colors flex-shrink-0">
+                    <FontAwesomeIcon
+                      icon={item.icon}
+                      className="text-xs text-gray-400 group-hover:text-emerald-500 transition-colors"
+                    />
+                  </div>
+                  <span className="leading-snug">{item.text}</span>
+                </a>
+              </li>
+            ))}
           </ul>
-
-          {/* Newsletter */}
-          <div className="mt-6">
-            <p className="text-xs text-gray-400 mb-3">
-              Xəbərlərdən xəbərdar olun
-            </p>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                placeholder="Email..."
-                className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-600 placeholder-gray-400 focus:outline-none focus:border-emerald-400 transition-colors"
-              />
-              <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-xl transition-colors shadow-sm">
-                <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -200,12 +184,12 @@ export default function Footer() {
             © 2026 Rovshan Academy. Bütün hüquqlar qorunur.
           </p>
           <div className="flex items-center gap-5">
-            <p className="text-xs text-gray-400 hover:text-emerald-500 transition-colors">
+            <span className="text-xs text-gray-400 hover:text-emerald-500 transition-colors cursor-pointer">
               Gizlilik siyasəti
-            </p>
-            <p className="text-xs text-gray-400 hover:text-emerald-500 transition-colors">
+            </span>
+            <span className="text-xs text-gray-400 hover:text-emerald-500 transition-colors cursor-pointer">
               İstifadə şərtləri
-            </p>
+            </span>
             <a
               href="/contact"
               className="text-xs text-gray-400 hover:text-emerald-500 transition-colors"
