@@ -1,5 +1,6 @@
 // src/components/Footer.jsx
 import { Link } from "react-router-dom";
+import logo from "../assets/img/logo1.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faLeaf,
@@ -17,7 +18,7 @@ import {
 const NAV_LINKS = [
   { label: "Ana səhifə", href: "/" },
   { label: "Akademiya", href: "/academy" },
-  { label: "Təlimlər", href: "/training" },
+  { label: "Xidmətlər", href: "/training" },
   { label: "Resurslar", href: "/resources" },
   { label: "Mütəxəssislər", href: "/specialists" },
   { label: "Media", href: "/media" },
@@ -53,13 +54,17 @@ export default function Footer() {
         {/* Brend */}
         <div className="lg:col-span-1">
           <div className="flex items-center gap-2.5 mb-4">
-            <div className="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center shadow-sm">
-              <FontAwesomeIcon icon={faLeaf} className="text-white text-sm" />
+            <div className="w-9 h-9   flex items-center justify-center ">
+              <a href="/" className="flex items-center gap-3 group">
+                <img
+                  src={logo}
+                  alt="İnkişaf Akademiyası"
+                  className="h-20 md:h-27 w-auto object-contain"
+                />
+              </a>
             </div>
             <span className="text-gray-900 font-bold text-sm leading-tight">
-              Rovshan
-              <br />
-              Academy
+              Rovshan Academy
             </span>
           </div>
           <p className="text-sm leading-relaxed mb-6 text-gray-400">
@@ -150,7 +155,7 @@ export default function Footer() {
                     className="text-xs text-emerald-500"
                   />
                 </div>
-                info@inkishaf.az
+                rovshan.academy@gmail.com
               </a>
             </li>
             <li>
@@ -195,20 +200,14 @@ export default function Footer() {
             © 2026 Rovshan Academy. Bütün hüquqlar qorunur.
           </p>
           <div className="flex items-center gap-5">
-            <a
-              href="#"
-              className="text-xs text-gray-400 hover:text-emerald-500 transition-colors"
-            >
+            <p className="text-xs text-gray-400 hover:text-emerald-500 transition-colors">
               Gizlilik siyasəti
-            </a>
-            <a
-              href="#"
-              className="text-xs text-gray-400 hover:text-emerald-500 transition-colors"
-            >
+            </p>
+            <p className="text-xs text-gray-400 hover:text-emerald-500 transition-colors">
               İstifadə şərtləri
-            </a>
+            </p>
             <a
-              href="#"
+              href="/contact"
               className="text-xs text-gray-400 hover:text-emerald-500 transition-colors"
             >
               Əlaqə

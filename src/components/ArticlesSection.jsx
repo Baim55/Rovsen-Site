@@ -69,7 +69,7 @@ export default function ArticlesSection() {
             </h2>
           </div>
           <button
-            onClick={() => navigate("/academy")}
+            onClick={() => navigate("/meqaleler")}
             className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-semibold text-sm transition-colors self-start md:self-auto group"
           >
             Bütün məqalələr

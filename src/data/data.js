@@ -57,12 +57,6 @@ export const services = [
   { icon: "🌱", title: "Şəxsi inkişaf",             desc: "Fərdi inkişaf proqramları" },
 ];
 
-export const specialists = [
-  { name: "Dr. Aynur Həsənova", role: "Uşaq psixoloqu",   exp: "12 il", initial: "AH" },
-  { name: "Kamran Əliyev",      role: "Loqoped",           exp: "8 il",  initial: "KƏ" },
-  { name: "Nigar Məmmədova",    role: "Pedaqoq-metodist",  exp: "15 il", initial: "NM" },
-  { name: "Tural Quliyev",      role: "Mentor & Kouç",     exp: "10 il", initial: "TQ" },
-];
 
 export const trainings = [
   { icon: "👨‍🏫", title: "Pedaqoq təlimləri",          desc: "Pedaqoji innovasiya və metodika",   tag: "Davam edir" },
@@ -102,9 +96,9 @@ export const resources = [
 export const navLinks = [
   { label: "Ana səhifə", href: "/" },
   { label: "Akademiya",  href: "/academy" },
-  { label: "Təlimlər",   href: "/training" },
+  { label: "Xidmətlər",   href: "/training" },
   { label: "Resurslar",  href: "/resources" },
-  { label: "Mütəxəssislər", href: "/specialists" },
+  { label: "Mütəxəssislər", href: "/komanda" },
   { label: "Media",      href: "/media" },
   { label: "Əlaqə",      href: "/contact" },
 ];

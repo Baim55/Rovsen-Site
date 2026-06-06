@@ -230,9 +230,7 @@ export default function ArticlePage() {
   );
 }
 
-/* ══════════════════════════════════════
-   Şərhlər komponenti
-══════════════════════════════════════ */
+
 function CommentsSection({ articleId, user, profile, style }) {
   const navigate = useNavigate();
   const [comments, setComments] = useState([]);

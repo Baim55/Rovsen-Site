@@ -258,7 +258,7 @@ const AUDIENCE_SERVICES = {
         "Psixologiya-pedaqogika inteqrasiyası",
         "Elmi-tədqiqat layihələri",
         "Akademik əməkdaşlıqlar",
-        "Sertifikat, diplom və akkreditasiya modelləri",
+        "Sertifikat akkreditasiya modelləri",
       ],
     },
     {
@@ -322,7 +322,7 @@ export default function ServicesSection() {
   }
 
   return (
-    <section className="py-20 px-6 bg-white">
+    <section className="mt-15 py-20 px-6 bg-white">
       <div className="max-w-7xl mx-auto">
 
         {/* ── Başlıq ── */}
