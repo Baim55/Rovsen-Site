@@ -184,10 +184,24 @@ export default function ArticlePage() {
 
       {/* ── Məzmun ── */}
       <div className="max-w-3xl mx-auto px-6 py-10">
+        {/* Şəkil — varsa göstər */}
+        {article.image_url && (
+          <div className="rounded-2xl overflow-hidden mb-8 shadow-sm">
+            <img
+              src={article.image_url}
+              alt={article.title}
+              className="w-full max-h-80 object-cover"
+            />
+          </div>
+        )}
         {article.content ? (
           <div
             className="prose prose-gray max-w-none text-gray-700 leading-relaxed text-base"
-            style={{ whiteSpace: "pre-wrap" }}
+            style={{
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+              overflowWrap: "anywhere",
+            }}
           >
             {article.content}
           </div>

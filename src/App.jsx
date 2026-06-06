@@ -13,6 +13,7 @@ import ArticlePage from "./components/ArticlePage";
 import RegisterPage from "./pages/RegisterPage";
 import ProfilePage from "./pages/ProfilePage";
 import ScrollToTop from "./components/ScrollToTop";
+import ContactPage from "./pages/ContactPage";
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/profil" element={<ProfilePage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/yas/:id" element={<AgeGroupPage />} />
           <Route path="/meqale/:id" element={<ArticlePage />} />

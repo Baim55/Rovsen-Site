@@ -77,7 +77,7 @@ function AgeGroupsSection() {
           >
             Yaş qrupları üzrə inkişaf
           </h2>
-          <p className="text-gray-500 max-w-xl mx-auto text-sm">
+          <p className="text-gray-500 max-w-7xl mx-auto text-sm">
             Yaş dövrünüzü seçin, rolunuzu seçin, lazımi resurslara çatın
           </p>
         </div>

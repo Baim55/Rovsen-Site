@@ -16,7 +16,6 @@ export default function NavList({ mobile = false, onClose }) {
             {link.label}
           </Link>
         ))}
-        {/* Auth düymələri Navbar-dan gəlir — burada yoxdur */}
       </div>
     );
   }

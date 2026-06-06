@@ -113,10 +113,7 @@ function HeroSection() {
                 <FontAwesomeIcon icon={faArrowRight} className="text-sm" />
               </button>
               <button
-                onClick={() => {
-                  const el = document.getElementById("contact");
-                  el?.scrollIntoView({ behavior: "smooth" });
-                }}
+                onClick={() => navigate("/contact")}
                 className="inline-flex items-center justify-center gap-2 border-2 border-gray-200 hover:border-emerald-300 bg-white hover:bg-emerald-50 text-gray-700 font-semibold px-8 py-4 rounded-2xl transition-all duration-200"
               >
                 <FontAwesomeIcon

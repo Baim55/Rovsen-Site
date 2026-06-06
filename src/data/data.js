@@ -106,6 +106,7 @@ export const navLinks = [
   { label: "Resurslar",  href: "/resources" },
   { label: "Mütəxəssislər", href: "/specialists" },
   { label: "Media",      href: "/media" },
+  { label: "Əlaqə",      href: "/contact" },
 ];
 
 export const quickAccessItems = [

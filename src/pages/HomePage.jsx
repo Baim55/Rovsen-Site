@@ -6,7 +6,6 @@ import TrainingsSection from "../components/TrainingsSection";
 import ArticlesSection from "../components/ArticlesSection";
 import ResourcesSection from "../components/ResourcesSection";
 import TestimonialsSection from "../components/TestimonialsSection";
-import ContactSection from "../components/ContactSection";
 
 export default function HomePage() {
   return (
@@ -19,7 +18,6 @@ export default function HomePage() {
       <ArticlesSection />
       <ResourcesSection />
       <TestimonialsSection />
-      <ContactSection />
     </>
   );
 }
