@@ -136,12 +136,16 @@ export default function DocumentsPage() {
   const [testSearch, setTestSearch] = useState("");
   const [testCategory, setTestCategory] = useState("Hamısı");
 
+  // Oyunlar state
+  const [games, setGames] = useState([]);
+  const [gameLoading, setGameLoading] = useState(false);
+  const [gameSearch, setGameSearch] = useState("");
+  const [gameCategory, setGameCategory] = useState("Hamısı");
+
   useEffect(() => {
     if (activeTab === "documents") fetchDocuments();
     else if (activeTab === "tests") fetchTests();
-    else if (activeTab === "games") {
-      navigate("/oyunlar");
-    }
+    else if (activeTab === "games") fetchGames();
   }, [activeTab]);
 
   async function fetchDocuments() {
@@ -164,6 +168,16 @@ export default function DocumentsPage() {
       .order("created_at", { ascending: false });
     setTests(data || []);
     setTestLoading(false);
+  }
+
+  async function fetchGames() {
+    setGameLoading(true);
+    const { data } = await supabase
+      .from("games")
+      .select("*")
+      .order("created_at", { ascending: false });
+    setGames(data || []);
+    setGameLoading(false);
   }
 
   function handleDownload(doc) {
@@ -217,7 +231,9 @@ export default function DocumentsPage() {
               ? "Sənədlər & Materiallar"
               : activeTab === "tests"
                 ? "İnkişaf Testləri"
-                : "Resurs Mərkəzi"}
+                : activeTab === "games"
+                  ? "İnkişaf Oyunları"
+                  : "Resurs Mərkəzi"}
           </h1>
           <p className="text-gray-500 text-sm max-w-xl mx-auto">
             {activeTab === "documents"
@@ -238,11 +254,7 @@ export default function DocumentsPage() {
                 key={tab.key}
                 onClick={() => {
                   if (tab.disabled) return;
-                  if (tab.key === "games") {
-                    navigate("/oyunlar");
-                    return;
-                  }
-                  setActiveTab(tab.key);
+                  setActiveTab(tab.key); // navigate yox
                 }}
                 disabled={tab.disabled}
                 className={`relative bg-white rounded-2xl border-2 p-6 text-left transition-all duration-200 ${
@@ -266,7 +278,7 @@ export default function DocumentsPage() {
                     Keç{" "}
                     <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
                   </div>
-                )}
+                )}  
               </button>
             ))}
           </div>
@@ -283,11 +295,7 @@ export default function DocumentsPage() {
                   key={tab.key}
                   onClick={() => {
                     if (tab.disabled) return;
-                    if (tab.key === "games") {
-                      navigate("/oyunlar");
-                      return;
-                    }
-                    setActiveTab(tab.key);
+                    setActiveTab(tab.key); // navigate yox
                   }}
                   disabled={tab.disabled}
                   className={`px-5 py-3 text-sm font-semibold border-b-2 -mb-px transition-colors ${
@@ -519,6 +527,147 @@ export default function DocumentsPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Oyunlar ── */}
+      {activeTab === "games" && (
+        <div className="max-w-5xl mx-auto px-6 py-8">
+          <div className="flex gap-4 mb-6">
+            <div className="relative flex-1">
+              <FontAwesomeIcon
+                icon={faSearch}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"
+              />
+              <input
+                value={gameSearch}
+                onChange={(e) => setGameSearch(e.target.value)}
+                placeholder="Oyun axtar..."
+                className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm bg-white"
+              />
+            </div>
+            <button
+              onClick={fetchGames}
+              className="w-12 h-12 rounded-2xl bg-white border-2 border-gray-200 hover:border-emerald-400 flex items-center justify-center transition-colors"
+            >
+              <FontAwesomeIcon
+                icon={faRotateRight}
+                className="text-gray-500 text-sm"
+              />
+            </button>
+          </div>
+
+          <div className="flex gap-2 flex-wrap mb-6">
+            {[
+              "Hamısı",
+              "Uşaqlar",
+              "Valideynlər",
+              "Pedaqoqlar",
+              "Psixoloqlar",
+              "Loqopedlər",
+              "EQ",
+              "IQ",
+              "Mentorlar",
+            ].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setGameCategory(cat)}
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                  gameCategory === cat
+                    ? "bg-emerald-500 text-white shadow-sm"
+                    : "bg-white border border-gray-200 text-gray-600 hover:border-emerald-400 hover:text-emerald-600"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {gameLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-2xl border border-gray-200 p-5 animate-pulse h-52"
+                />
+              ))}
+            </div>
+          ) : games.filter((g) => {
+              const ms = g.title
+                ?.toLowerCase()
+                .includes(gameSearch.toLowerCase());
+              const mc =
+                gameCategory === "Hamısı" || g.category === gameCategory;
+              return ms && mc;
+            }).length === 0 ? (
+            <div className="text-center py-20 text-gray-400">
+              <FontAwesomeIcon
+                icon={faBoxOpen}
+                className="text-5xl text-gray-200 mb-4"
+              />
+              <p>Oyun tapılmadı</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {games
+                .filter((g) => {
+                  const ms = g.title
+                    ?.toLowerCase()
+                    .includes(gameSearch.toLowerCase());
+                  const mc =
+                    gameCategory === "Hamısı" || g.category === gameCategory;
+                  return ms && mc;
+                })
+                .map((game) => (
+                  <div
+                    key={game.id}
+                    onClick={() => navigate(`/oyun/${game.id}`)}
+                    className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group overflow-hidden"
+                  >
+                    {game.thumbnail ? (
+                      <img
+                        src={game.thumbnail}
+                        alt=""
+                        className="w-full h-36 object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-36 bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
+                        <span className="text-5xl">🎮</span>
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        {game.age_group && (
+                          <span className="text-xs bg-emerald-50 text-emerald-700 font-semibold px-2 py-0.5 rounded-full">
+                            {game.age_group}
+                          </span>
+                        )}
+                        {game.category && (
+                          <span className="text-xs bg-gray-100 text-gray-600 font-medium px-2 py-0.5 rounded-full">
+                            {game.category}
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="font-bold text-gray-900 mb-1 group-hover:text-emerald-600 transition-colors">
+                        {game.title}
+                      </h3>
+                      {game.description && (
+                        <p className="text-xs text-gray-400 line-clamp-2 mb-3">
+                          {game.description}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+                        Oyna{" "}
+                        <FontAwesomeIcon
+                          icon={faArrowRight}
+                          className="text-xs group-hover:translate-x-1 transition-transform"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
             </div>
           )}
         </div>
