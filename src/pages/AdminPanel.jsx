@@ -18,6 +18,8 @@ import {
   faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { DocumentsTab } from "../components/DocumentsTab";
+import { TestsTab } from "../components/TestsTab";
+import { GamesTab } from "../components/GamesTab";
 
 /* ─── sabitlər ─────────────────────────────────────── */
 const ROLE_CATEGORIES = {
@@ -386,452 +388,459 @@ export default function AdminPanel() {
               {profile?.role || "Mütəxəssis"}
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => {
-                setShowForm(true);
-                setEditId(null);
-                setForm(EMPTY_FORM);
-                setImgFile(null);
-                setImgPreview(null);
-              }}
-              className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors"
-            >
-              + Məqalə əlavə et
-            </button>
-            <button
-              onClick={async () => {
-                await signOut();
-                navigate("/login");
-              }}
-              className="text-gray-500 hover:text-gray-800 text-sm font-medium transition-colors"
-            >
-              Çıxış
-            </button>
-          </div>
+          <button
+            onClick={async () => {
+              await signOut();
+              navigate("/login");
+            }}
+            className="text-gray-500 hover:text-gray-800 text-sm font-medium transition-colors"
+          >
+            Çıxış
+          </button>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-6 pt-4">
-  <div className="flex gap-2 border-b border-gray-200">
-    {["articles", "documents", ...(profile?.role === "admin" ? ["specialists"] : [])].map((tab) => (
-      <button
-        key={tab}
-        onClick={() => setActiveAdminTab(tab)}
-        className={`px-5 py-2.5 text-sm font-semibold transition-colors border-b-2 -mb-px
-          ${
-            activeAdminTab === tab
-              ? "border-emerald-500 text-emerald-600"
-              : "border-transparent text-gray-500 hover:text-gray-800"
-          }`}
-      >
-        {tab === "articles"
-          ? "Məqalələr"
-          : tab === "specialists"
-          ? "Mütəxəssislər"
-          : "Sənədlər"}
-      </button>
-    ))}
-  </div>
-</div>
 
-      {/* ── Statistika ── */}
-      {profile?.role === "admin" && stats && (
-        <div className="max-w-7xl mx-auto px-6 pt-6">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            {STAT_CARDS.map((s) => (
-              <div
-                key={s.label}
-                className="bg-white rounded-2xl border border-gray-100 p-4 text-center shadow-sm hover:shadow-md transition-shadow"
+      <div className="max-w-7xl mx-auto px-6 py-6 flex gap-6">
+        {/* ── Sidebar ── */}
+        <aside className="w-52 flex-shrink-0">
+          <nav className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            {[
+              "articles",
+              "documents",
+              "tests",
+              "games",
+              ...(profile?.role === "admin" ? ["specialists"] : []),
+            ].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveAdminTab(tab)}
+                className={`w-full text-left px-4 py-3 text-sm font-semibold transition-colors border-l-4 ${
+                  activeAdminTab === tab
+                    ? "border-emerald-500 text-emerald-600 bg-emerald-50"
+                    : "border-transparent text-gray-500 hover:text-gray-800 hover:bg-gray-50"
+                }`}
               >
-                <div
-                  className={`w-10 h-10 ${s.bg} rounded-xl flex items-center justify-center mx-auto mb-2`}
-                >
-                  <FontAwesomeIcon
-                    icon={s.icon}
-                    className={`${s.color} text-lg`}
-                  />
-                </div>
-                <div className="text-2xl font-bold text-gray-900">
-                  {stats[s.key]}
-                </div>
-                <div className="text-xs text-gray-500 mt-0.5">{s.label}</div>
-              </div>
+                {tab === "articles"
+                  ? "📝 Məqalələr"
+                  : tab === "documents"
+                    ? "📄 Sənədlər"
+                    : tab === "tests"
+                      ? "📋 Testlər"
+                      : tab === "games"
+                        ? "🎮 Oyunlar"
+                        : "👥 Mütəxəssislər"}
+              </button>
             ))}
-          </div>
-        </div>
-      )}
+          </nav>
 
-      {/* ── Məzmun ── */}
-      {activeAdminTab === "articles" && (
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          {msg && (
-            <div
-              className={`mb-6 px-4 py-3 rounded-xl text-sm font-medium ${
-                msg.type === "success"
-                  ? "bg-emerald-50 border border-emerald-200 text-emerald-700"
-                  : "bg-red-50 border border-red-200 text-red-700"
-              }`}
-            >
-              {msg.text}
-            </div>
-          )}
-
-          {/* ── Form ── */}
-          {showForm && (
-            <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold text-gray-800">
-                  {editId ? "Məqaləni redaktə et" : "Yeni məqalə"}
-                </h2>
-                <button
-                  onClick={resetForm}
-                  className="text-gray-400 hover:text-gray-600 text-xl"
+          {/* Statistika sidebar-da */}
+          {profile?.role === "admin" && stats && (
+            <div className="mt-4 space-y-2">
+              {STAT_CARDS.map((s) => (
+                <div
+                  key={s.label}
+                  className="bg-white rounded-xl border border-gray-100 px-4 py-3 flex items-center gap-3"
                 >
-                  ✕
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Başlıq */}
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                    Başlıq *
-                  </label>
-                  <input
-                    value={form.title}
-                    onChange={(e) => handleChange("title", e.target.value)}
-                    placeholder="Məqalənin başlığı..."
-                    className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm"
-                  />
-                </div>
-
-                {/* Yaş qrupu */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                    Yaş qrupu *
-                  </label>
-                  <select
-                    value={form.age_group}
-                    onChange={(e) => handleChange("age_group", e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm bg-white"
+                  <div
+                    className={`w-8 h-8 ${s.bg} rounded-lg flex items-center justify-center flex-shrink-0`}
                   >
-                    <option value="">Seçin...</option>
-                    {ageGroups
-                      .filter((g) => allowedAgeGroups.includes(g.id))
-                      .map((g) => (
-                        <option key={g.id} value={g.id}>
-                          {g.age} — {g.label}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-
-                {/* Kateqoriya */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                    Kateqoriya *
-                  </label>
-                  <select
-                    value={form.category}
-                    onChange={(e) => handleChange("category", e.target.value)}
-                    disabled={!form.age_group}
-                    className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm bg-white disabled:opacity-50"
-                  >
-                    <option value="">Seçin...</option>
-                    {availableCategories.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Alt yaş & inkişaf sahəsi */}
-                {hasSubs && (
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                      Alt yaş qrupu
-                    </label>
-                    <select
-                      value={form.sub_age}
-                      onChange={(e) => handleChange("sub_age", e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm bg-white"
-                    >
-                      <option value="">Seçin...</option>
-                      {(subAgeGroups["1-6"] || []).map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-                {hasSubs && (
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                      İnkişaf sahəsi
-                    </label>
-                    <select
-                      value={form.area}
-                      onChange={(e) => handleChange("area", e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm bg-white"
-                    >
-                      <option value="">Seçin...</option>
-                      {developmentAreas.map((a) => (
-                        <option key={a.id} value={a.id}>
-                          {a.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
-                {/* Tag */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                    Tag
-                  </label>
-                  <input
-                    value={form.tag}
-                    onChange={(e) => handleChange("tag", e.target.value)}
-                    placeholder="Psixologiya, Motor..."
-                    className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm"
-                  />
-                </div>
-
-                {/* Oxu müddəti */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                    Oxu müddəti
-                  </label>
-                  <input
-                    value={form.time}
-                    onChange={(e) => handleChange("time", e.target.value)}
-                    placeholder="5 dəq"
-                    className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm"
-                  />
-                </div>
-
-                {/* ── Şəkil yükləmə ── */}
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                    Şəkil{" "}
-                    <span className="text-gray-400 normal-case font-normal">
-                      (JPG, PNG, WebP, GIF · max {MAX_SIZE_MB}MB)
-                    </span>
-                  </label>
-
-                  {/* Preview varsa göstər */}
-                  {imgPreview ? (
-                    <div className="relative w-full rounded-xl overflow-hidden border-2 border-gray-200 bg-gray-50">
-                      <img
-                        src={imgPreview}
-                        alt="Önizləmə"
-                        className="w-full max-h-56 object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleRemoveImage}
-                        className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-lg flex items-center justify-center shadow-md transition-colors"
-                        title="Şəkli sil"
-                      >
-                        <FontAwesomeIcon icon={faXmark} className="text-sm" />
-                      </button>
-                      {imgFile && (
-                        <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded-lg">
-                          {imgFile.name} ·{" "}
-                          {(imgFile.size / 1024 / 1024).toFixed(2)}MB
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    /* Yükləmə zonası */
-                    <label
-                      htmlFor="img-upload"
-                      className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/30 transition-all group"
-                    >
-                      <FontAwesomeIcon
-                        icon={faImage}
-                        className="text-3xl text-gray-300 group-hover:text-emerald-400 mb-2 transition-colors"
-                      />
-                      <p className="text-sm text-gray-400 group-hover:text-emerald-500 transition-colors">
-                        Şəkil seçmək üçün klikləyin
-                      </p>
-                      <p className="text-xs text-gray-300 mt-1">
-                        JPG, JPEG, PNG, WebP, GIF · max {MAX_SIZE_MB}MB
-                      </p>
-                    </label>
-                  )}
-
-                  {/* Gizli file input */}
-                  <input
-                    id="img-upload"
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
-                    className="hidden"
-                    onChange={handleFileSelect}
-                  />
-
-                  {/* Xəta mesajı */}
-                  {imgError && (
-                    <div className="mt-2 flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                      <FontAwesomeIcon icon={faTriangleExclamation} />
-                      {imgError}
-                    </div>
-                  )}
-                </div>
-
-                {/* Məzmun */}
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                    Məzmun
-                  </label>
-                  <textarea
-                    value={form.content}
-                    onChange={(e) => handleChange("content", e.target.value)}
-                    placeholder="Məqalənin ətraflı məzmununu buraya yazın..."
-                    rows={10}
-                    className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm resize-y leading-relaxed"
-                  />
-                  <p className="text-xs text-gray-400 mt-1">
-                    Paraqraflar arası boş sətir buraxın
-                  </p>
-                </div>
-              </div>
-
-              {/* Düymələr */}
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={handleSave}
-                  disabled={imgUploading}
-                  className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors"
-                >
-                  {imgUploading && (
                     <FontAwesomeIcon
-                      icon={faSpinner}
-                      className="animate-spin"
+                      icon={s.icon}
+                      className={`${s.color} text-sm`}
                     />
-                  )}
-                  {imgUploading
-                    ? "Yüklənir..."
-                    : editId
-                      ? "Yenilə"
-                      : "Əlavə et"}
-                </button>
-                <button
-                  onClick={resetForm}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors"
-                >
-                  Ləğv et
-                </button>
-              </div>
+                  </div>
+                  <div>
+                    <div className="text-base font-bold text-gray-900 leading-none">
+                      {stats[s.key]}
+                    </div>
+                    <div className="text-xs text-gray-400 mt-0.5">
+                      {s.label}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
+        </aside>
 
-          {/* ── Məqalələr siyahısı ── */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-800">Məqalələrim</h2>
-              <span className="text-sm text-gray-400">
-                {articles.length} məqalə
-              </span>
-            </div>
+        {/* ── Məzmun ── */}
+        <main className="flex-1 min-w-0">
+          {activeAdminTab === "articles" && (
+            <div>
+              {!showForm && (
+                <button
+                  onClick={() => {
+                    setShowForm(true);
+                    setEditId(null);
+                    setForm(EMPTY_FORM);
+                    setImgFile(null);
+                    setImgPreview(null);
+                  }}
+                  className="mb-6 flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors"
+                >
+                  + Məqalə əlavə et
+                </button>
+              )}
 
-            {loading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className="bg-white rounded-2xl border border-gray-200 p-5 animate-pulse h-20"
-                  />
-                ))}
-              </div>
-            ) : articles.length === 0 ? (
-              <div className="text-center py-16 text-gray-400">
-                <p className="text-4xl mb-3">📝</p>
-                <p>Hələ məqalə yoxdur. Yeni məqalə əlavə edin!</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {articles.map((article) => (
-                  <div
-                    key={article.id}
-                    className="bg-white rounded-2xl border border-gray-200 p-5 flex items-start justify-between gap-4 hover:shadow-sm transition-shadow"
-                  >
-                    {/* Şəkil thumbnail */}
-                    {article.image_url && (
-                      <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
-                        <img
-                          src={article.image_url}
-                          alt=""
-                          className="w-full h-full object-cover"
-                        />
+              {msg && (
+                <div
+                  className={`mb-6 px-4 py-3 rounded-xl text-sm font-medium ${
+                    msg.type === "success"
+                      ? "bg-emerald-50 border border-emerald-200 text-emerald-700"
+                      : "bg-red-50 border border-red-200 text-red-700"
+                  }`}
+                >
+                  {msg.text}
+                </div>
+              )}
+
+              {showForm && (
+                <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-8">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-lg font-bold text-gray-800">
+                      {editId ? "Məqaləni redaktə et" : "Yeni məqalə"}
+                    </h2>
+                    <button
+                      onClick={resetForm}
+                      className="text-gray-400 hover:text-gray-600 text-xl"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                        Başlıq *
+                      </label>
+                      <input
+                        value={form.title}
+                        onChange={(e) => handleChange("title", e.target.value)}
+                        placeholder="Məqalənin başlığı..."
+                        className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                        Yaş qrupu *
+                      </label>
+                      <select
+                        value={form.age_group}
+                        onChange={(e) =>
+                          handleChange("age_group", e.target.value)
+                        }
+                        className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm bg-white"
+                      >
+                        <option value="">Seçin...</option>
+                        {ageGroups
+                          .filter((g) => allowedAgeGroups.includes(g.id))
+                          .map((g) => (
+                            <option key={g.id} value={g.id}>
+                              {g.age} — {g.label}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                        Kateqoriya *
+                      </label>
+                      <select
+                        value={form.category}
+                        onChange={(e) =>
+                          handleChange("category", e.target.value)
+                        }
+                        disabled={!form.age_group}
+                        className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm bg-white disabled:opacity-50"
+                      >
+                        <option value="">Seçin...</option>
+                        {availableCategories.map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {hasSubs && (
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                          Alt yaş qrupu
+                        </label>
+                        <select
+                          value={form.sub_age}
+                          onChange={(e) =>
+                            handleChange("sub_age", e.target.value)
+                          }
+                          className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm bg-white"
+                        >
+                          <option value="">Seçin...</option>
+                          {(subAgeGroups["1-6"] || []).map((s) => (
+                            <option key={s.id} value={s.id}>
+                              {s.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                    {hasSubs && (
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                          İnkişaf sahəsi
+                        </label>
+                        <select
+                          value={form.area}
+                          onChange={(e) => handleChange("area", e.target.value)}
+                          className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm bg-white"
+                        >
+                          <option value="">Seçin...</option>
+                          {developmentAreas.map((a) => (
+                            <option key={a.id} value={a.id}>
+                              {a.label}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     )}
 
-                    <div
-                      className="flex-1 min-w-0 cursor-pointer"
-                      onClick={() => navigate(`/meqale/${article.id}`)}
-                    >
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="text-xs bg-emerald-50 text-emerald-700 font-semibold px-2 py-0.5 rounded-full">
-                          {article.age_group}
-                        </span>
-                        <span className="text-xs bg-gray-100 text-gray-600 font-medium px-2 py-0.5 rounded-full">
-                          {article.category}
-                        </span>
-                        {article.tag && (
-                          <span className="text-xs text-gray-400">
-                            {article.tag}
-                          </span>
-                        )}
-                      </div>
-                      <h3 className="text-gray-800 font-semibold text-sm leading-snug truncate hover:text-emerald-600 transition-colors">
-                        {article.title}
-                      </h3>
-                      <div className="flex items-center gap-3 mt-1">
-                        {article.time && (
-                          <p className="text-xs text-gray-400">
-                            {article.time} oxu
-                          </p>
-                        )}
-                        {/* {article.content
-                        ? <p className="text-xs text-emerald-500">✓ Məzmun var</p>
-                        : <p className="text-xs text-orange-400">⚠ Məzmun yoxdur</p>}
-                      {article.image_url
-                        ? <p className="text-xs text-blue-500">🖼 Şəkil var</p>
-                        : null} */}
-                      </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                        Tag
+                      </label>
+                      <input
+                        value={form.tag}
+                        onChange={(e) => handleChange("tag", e.target.value)}
+                        placeholder="Psixologiya, Motor..."
+                        className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm"
+                      />
                     </div>
 
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <button
-                        onClick={() => handleEdit(article)}
-                        className="text-xs bg-blue-50 hover:bg-blue-100 text-blue-600 font-semibold px-3 py-1.5 rounded-lg transition-colors"
-                      >
-                        Redaktə
-                      </button>
-                      <button
-                        onClick={() => handleDelete(article.id)}
-                        className="text-xs bg-red-50 hover:bg-red-100 text-red-600 font-semibold px-3 py-1.5 rounded-lg transition-colors"
-                      >
-                        Sil
-                      </button>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                        Oxu müddəti
+                      </label>
+                      <input
+                        value={form.time}
+                        onChange={(e) => handleChange("time", e.target.value)}
+                        placeholder="5 dəq"
+                        className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                        Şəkil{" "}
+                        <span className="text-gray-400 normal-case font-normal">
+                          (JPG, PNG, WebP, GIF · max {MAX_SIZE_MB}MB)
+                        </span>
+                      </label>
+                      {imgPreview ? (
+                        <div className="relative w-full rounded-xl overflow-hidden border-2 border-gray-200 bg-gray-50">
+                          <img
+                            src={imgPreview}
+                            alt="Önizləmə"
+                            className="w-full max-h-56 object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleRemoveImage}
+                            className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-lg flex items-center justify-center shadow-md transition-colors"
+                          >
+                            <FontAwesomeIcon
+                              icon={faXmark}
+                              className="text-sm"
+                            />
+                          </button>
+                          {imgFile && (
+                            <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded-lg">
+                              {imgFile.name} ·{" "}
+                              {(imgFile.size / 1024 / 1024).toFixed(2)}MB
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <label
+                          htmlFor="img-upload"
+                          className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/30 transition-all group"
+                        >
+                          <FontAwesomeIcon
+                            icon={faImage}
+                            className="text-3xl text-gray-300 group-hover:text-emerald-400 mb-2 transition-colors"
+                          />
+                          <p className="text-sm text-gray-400 group-hover:text-emerald-500 transition-colors">
+                            Şəkil seçmək üçün klikləyin
+                          </p>
+                          <p className="text-xs text-gray-300 mt-1">
+                            JPG, JPEG, PNG, WebP, GIF · max {MAX_SIZE_MB}MB
+                          </p>
+                        </label>
+                      )}
+                      <input
+                        id="img-upload"
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                        className="hidden"
+                        onChange={handleFileSelect}
+                      />
+                      {imgError && (
+                        <div className="mt-2 flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                          <FontAwesomeIcon icon={faTriangleExclamation} />{" "}
+                          {imgError}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                        Məzmun
+                      </label>
+                      <textarea
+                        value={form.content}
+                        onChange={(e) =>
+                          handleChange("content", e.target.value)
+                        }
+                        placeholder="Məqalənin ətraflı məzmununu buraya yazın..."
+                        rows={10}
+                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm resize-y leading-relaxed"
+                      />
+                      <p className="text-xs text-gray-400 mt-1">
+                        Paraqraflar arası boş sətir buraxın
+                      </p>
                     </div>
                   </div>
-                ))}
+
+                  <div className="flex gap-3 mt-6">
+                    <button
+                      onClick={handleSave}
+                      disabled={imgUploading}
+                      className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors"
+                    >
+                      {imgUploading && (
+                        <FontAwesomeIcon
+                          icon={faSpinner}
+                          className="animate-spin"
+                        />
+                      )}
+                      {imgUploading
+                        ? "Yüklənir..."
+                        : editId
+                          ? "Yenilə"
+                          : "Əlavə et"}
+                    </button>
+                    <button
+                      onClick={resetForm}
+                      className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors"
+                    >
+                      Ləğv et
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-bold text-gray-800">
+                    Məqalələrim
+                  </h2>
+                  <span className="text-sm text-gray-400">
+                    {articles.length} məqalə
+                  </span>
+                </div>
+                {loading ? (
+                  <div className="space-y-3">
+                    {[1, 2, 3].map((i) => (
+                      <div
+                        key={i}
+                        className="bg-white rounded-2xl border border-gray-200 p-5 animate-pulse h-20"
+                      />
+                    ))}
+                  </div>
+                ) : articles.length === 0 ? (
+                  <div className="text-center py-16 text-gray-400">
+                    <p className="text-4xl mb-3">📝</p>
+                    <p>Hələ məqalə yoxdur. Yeni məqalə əlavə edin!</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {articles.map((article) => (
+                      <div
+                        key={article.id}
+                        className="bg-white rounded-2xl border border-gray-200 p-5 flex items-start justify-between gap-4 hover:shadow-sm transition-shadow"
+                      >
+                        {article.image_url && (
+                          <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
+                            <img
+                              src={article.image_url}
+                              alt=""
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                        <div
+                          className="flex-1 min-w-0 cursor-pointer"
+                          onClick={() => navigate(`/meqale/${article.id}`)}
+                        >
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <span className="text-xs bg-emerald-50 text-emerald-700 font-semibold px-2 py-0.5 rounded-full">
+                              {article.age_group}
+                            </span>
+                            <span className="text-xs bg-gray-100 text-gray-600 font-medium px-2 py-0.5 rounded-full">
+                              {article.category}
+                            </span>
+                            {article.tag && (
+                              <span className="text-xs text-gray-400">
+                                {article.tag}
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="text-gray-800 font-semibold text-sm leading-snug truncate hover:text-emerald-600 transition-colors">
+                            {article.title}
+                          </h3>
+                          {article.time && (
+                            <p className="text-xs text-gray-400 mt-1">
+                              {article.time} oxu
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <button
+                            onClick={() => handleEdit(article)}
+                            className="text-xs bg-blue-50 hover:bg-blue-100 text-blue-600 font-semibold px-3 py-1.5 rounded-lg transition-colors"
+                          >
+                            Redaktə
+                          </button>
+                          <button
+                            onClick={() => handleDelete(article.id)}
+                            className="text-xs bg-red-50 hover:bg-red-100 text-red-600 font-semibold px-3 py-1.5 rounded-lg transition-colors"
+                          >
+                            Sil
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </div>
-      )}
-      {activeAdminTab === "specialists" && (
-        <SpecialistsTab user={user} profile={profile} />
-      )}
-      {activeAdminTab === "documents" && (
-        <DocumentsTab user={user} profile={profile} />
-      )}
+            </div>
+          )}
+
+          {activeAdminTab === "specialists" && (
+            <SpecialistsTab user={user} profile={profile} />
+          )}
+          {activeAdminTab === "documents" && (
+            <DocumentsTab user={user} profile={profile} />
+          )}
+          {activeAdminTab === "tests" && (
+            <TestsTab user={user} profile={profile} />
+          )}
+          {activeAdminTab === "games" && (
+            <GamesTab user={user} profile={profile} />
+          )}
+        </main>
+      </div>
     </div>
   );
 }

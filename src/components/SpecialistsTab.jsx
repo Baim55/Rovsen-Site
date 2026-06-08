@@ -179,7 +179,7 @@ export function SpecialistsTab({ user, profile }) {
 
   /* ── UI ── */
   return (
-    <div className="max-w-7xl mx-auto px-6 py-8">
+    <div className="max-w-7xl mx-auto px-6 py-8 ">
 
       {/* Mesaj */}
       {msg && (
@@ -194,7 +194,7 @@ export function SpecialistsTab({ user, profile }) {
 
       {/* Əlavə et düyməsi */}
       {!showForm && (
-        <div className="flex justify-end mb-6">
+        <div className="flex justify-start mb-6">
           <button
             onClick={() => { setShowForm(true); setEditId(null); setForm(EMPTY_SPEC); }}
             className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors"

@@ -16,11 +16,15 @@ import TeamPage from "./pages/TeamPage";
 import DocumentsPage from "./pages/Documentspage";
 import ArticlesPage from "./pages/Articlespage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import TestsPage from "./pages/TestsPage";
+import TestPage from "./pages/TestPage";
+import GamesPage from "./pages/GamesPage";
+import GamePage from "./pages/GamePage";
 
 export default function App() {
   return (
     <BrowserRouter>
-     <ScrollToTop />
+      <ScrollToTop />
       <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -38,6 +42,10 @@ export default function App() {
           <Route path="/yas/:id" element={<AgeGroupPage />} />
           <Route path="/meqale/:id" element={<ArticlePage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/tests" element={<TestsPage />} />
+          <Route path="/test/:id" element={<TestPage />} />
+          <Route path="/oyunlar" element={<GamesPage />} />
+          <Route path="/oyun/:id" element={<GamePage />} />
         </Routes>
       </Layout>
     </BrowserRouter>

@@ -16,6 +16,9 @@ import {
   faTriangleExclamation,
   faLock,
   faRotateRight,
+  faClipboardList,
+  faArrowRight,
+  faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 
 const EMAILJS_SERVICE_ID = "service_n9o155d";
@@ -60,7 +63,7 @@ const FILE_TYPES = {
   },
 };
 
-const CATEGORIES = [
+const DOC_CATEGORIES = [
   "Hamısı",
   "Uşaqlar",
   "Valideynlər",
@@ -70,6 +73,27 @@ const CATEGORIES = [
   "EQ",
   "IQ",
   "Mentorlar",
+];
+const TEST_CATEGORIES = [
+  "Hamısı",
+  "Uşaqlar",
+  "Valideynlər",
+  "Pedaqoqlar",
+  "Psixoloqlar",
+  "Loqopedlər",
+  "EQ",
+  "IQ",
+  "Mentorlar",
+];
+
+const MAIN_TABS = [
+  {
+    key: "documents",
+    label: "📄 Sənədlər",
+    desc: "PDF, Word, PowerPoint materiallar",
+  },
+  { key: "tests", label: "📝 Testlər", desc: "Özünüzü yoxlayın" },
+  { key: "games", label: "🎮 Oyunlar", desc: "Oynayaraq öyrənin" },
 ];
 
 function getFileType(url = "", mimeType = "") {
@@ -93,34 +117,53 @@ export default function DocumentsPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const [documents, setDocuments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [search, setSearch] = useState("");
-//   const [activeCategory, setActiveCategory] = useState("Hamısı");
+  const [activeTab, setActiveTab] = useState(state?.tab ?? null); // null = seçim ekranı
 
+  // Sənədlər state
+  const [documents, setDocuments] = useState([]);
+  const [docLoading, setDocLoading] = useState(false);
+  const [docError, setDocError] = useState(null);
+  const [docSearch, setDocSearch] = useState("");
+  const [docCategory, setDocCategory] = useState("Hamısı");
   const [showContact, setShowContact] = useState(false);
   const [contactDoc, setContactDoc] = useState(null);
   const [contactType, setContactType] = useState(null);
   const [previewDoc, setPreviewDoc] = useState(null);
-  const [activeCategory, setActiveCategory] = useState(
-    state?.category ?? "Hamısı",
-  );
+
+  // Testlər state
+  const [tests, setTests] = useState([]);
+  const [testLoading, setTestLoading] = useState(false);
+  const [testSearch, setTestSearch] = useState("");
+  const [testCategory, setTestCategory] = useState("Hamısı");
 
   useEffect(() => {
-    fetchDocuments();
-  }, []);
+    if (activeTab === "documents") fetchDocuments();
+    else if (activeTab === "tests") fetchTests();
+    else if (activeTab === "games") {
+      navigate("/oyunlar");
+    }
+  }, [activeTab]);
 
   async function fetchDocuments() {
-    setLoading(true);
-    setError(null);
+    setDocLoading(true);
+    setDocError(null);
     const { data, error } = await supabase
       .from("documents")
       .select("*")
       .order("created_at", { ascending: false });
-    if (error) setError(error.message);
+    if (error) setDocError(error.message);
     else setDocuments(data || []);
-    setLoading(false);
+    setDocLoading(false);
+  }
+
+  async function fetchTests() {
+    setTestLoading(true);
+    const { data } = await supabase
+      .from("tests")
+      .select("*, test_questions(id)")
+      .order("created_at", { ascending: false });
+    setTests(data || []);
+    setTestLoading(false);
   }
 
   function handleDownload(doc) {
@@ -132,7 +175,6 @@ export default function DocumentsPage() {
     setContactType("download");
     setShowContact(true);
   }
-
   function handlePreview(doc) {
     if (!user) {
       navigate("/login");
@@ -143,12 +185,19 @@ export default function DocumentsPage() {
     setShowContact(true);
   }
 
-  const filtered = documents.filter((doc) => {
+  const filteredDocs = documents.filter((doc) => {
     const matchSearch =
-      doc.title?.toLowerCase().includes(search.toLowerCase()) ||
-      doc.description?.toLowerCase().includes(search.toLowerCase());
-    const matchCat =
-      activeCategory === "Hamısı" || doc.category === activeCategory;
+      doc.title?.toLowerCase().includes(docSearch.toLowerCase()) ||
+      doc.description?.toLowerCase().includes(docSearch.toLowerCase());
+    const matchCat = docCategory === "Hamısı" || doc.category === docCategory;
+    return matchSearch && matchCat;
+  });
+
+  const filteredTests = tests.filter((t) => {
+    const matchSearch = t.title
+      ?.toLowerCase()
+      .includes(testSearch.toLowerCase());
+    const matchCat = testCategory === "Hamısı" || t.category === testCategory;
     return matchSearch && matchCat;
   });
 
@@ -164,119 +213,316 @@ export default function DocumentsPage() {
             className="text-3xl md:text-4xl font-bold text-gray-900 mb-3"
             style={{ fontFamily: "'Georgia', serif" }}
           >
-            Sənədlər & Materiallar
+            {activeTab === "documents"
+              ? "Sənədlər & Materiallar"
+              : activeTab === "tests"
+                ? "İnkişaf Testləri"
+                : "Resurs Mərkəzi"}
           </h1>
           <p className="text-gray-500 text-sm max-w-xl mx-auto">
-            PDF, Word, PowerPoint formatında faydalı materialları oxuyun və
-            yükləyin
+            {activeTab === "documents"
+              ? "PDF, Word, PowerPoint formatında faydalı materiallar"
+              : activeTab === "tests"
+                ? "Özünüzü və uşaqlarınızı daha yaxşı tanıyın"
+                : "Sənədlər, testlər və oyunlar arasından seçin"}
           </p>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-8">
-        {/* ── Axtarış ── */}
-        <div className="flex gap-4 mb-8">
-          <div className="relative flex-1">
-            <FontAwesomeIcon
-              icon={faSearch}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"
-            />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Sənəd axtar..."
-              className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm bg-white"
-            />
-          </div>
-          <button
-            onClick={fetchDocuments}
-            className="w-12 h-12 rounded-2xl bg-white border-2 border-gray-200 hover:border-emerald-400 flex items-center justify-center flex-shrink-0 transition-colors"
-          >
-            <FontAwesomeIcon
-              icon={faRotateRight}
-              className="text-gray-500 text-sm"
-            />
-          </button>
-        </div>
-
-        {/* ── Kateqoriyalar ── */}
-        <div className="flex gap-2 flex-wrap mb-8">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                activeCategory === cat
-                  ? "bg-emerald-500 text-white shadow-sm"
-                  : "bg-white border border-gray-200 text-gray-600 hover:border-emerald-400 hover:text-emerald-600"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {!loading && !error && (
-          <p className="text-sm text-gray-400 mb-4">
-            {filtered.length} sənəd tapıldı
-          </p>
-        )}
-
-        {/* ── Loading ── */}
-        {loading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="bg-white rounded-2xl border border-gray-200 p-5 animate-pulse h-36"
-              />
+      {/* ── Seçim ekranı ── */}
+      {!activeTab && (
+        <div className="max-w-3xl mx-auto px-6 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {MAIN_TABS.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => {
+                  if (tab.disabled) return;
+                  if (tab.key === "games") {
+                    navigate("/oyunlar");
+                    return;
+                  }
+                  setActiveTab(tab.key);
+                }}
+                disabled={tab.disabled}
+                className={`relative bg-white rounded-2xl border-2 p-6 text-left transition-all duration-200 ${
+                  tab.disabled
+                    ? "border-gray-100 opacity-60 cursor-not-allowed"
+                    : "border-gray-200 hover:border-emerald-400 hover:shadow-lg hover:-translate-y-1 cursor-pointer group"
+                }`}
+              >
+                {tab.disabled && (
+                  <span className="absolute top-3 right-3 text-xs bg-amber-100 text-amber-700 font-semibold px-2 py-0.5 rounded-full">
+                    Tezliklə
+                  </span>
+                )}
+                <div className="text-3xl mb-4">{tab.label.split(" ")[0]}</div>
+                <h3 className="font-bold text-gray-900 mb-1 text-base">
+                  {tab.label.split(" ").slice(1).join(" ")}
+                </h3>
+                <p className="text-sm text-gray-400">{tab.desc}</p>
+                {!tab.disabled && (
+                  <div className="flex items-center gap-1 mt-4 text-xs font-semibold text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Keç{" "}
+                    <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
+                  </div>
+                )}
+              </button>
             ))}
           </div>
-        )}
+        </div>
+      )}
 
-        {/* ── Xəta ── */}
-        {error && (
-          <div className="text-center py-16">
-            <FontAwesomeIcon
-              icon={faTriangleExclamation}
-              className="text-4xl text-amber-400 mb-3"
-            />
-            <p className="text-gray-500 mb-4">{error}</p>
+      {/* ── Tab navigasiyası (seçildikdən sonra) ── */}
+      {activeTab && (
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="flex gap-1">
+              {MAIN_TABS.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => {
+                    if (tab.disabled) return;
+                    if (tab.key === "games") {
+                      navigate("/oyunlar");
+                      return;
+                    }
+                    setActiveTab(tab.key);
+                  }}
+                  disabled={tab.disabled}
+                  className={`px-5 py-3 text-sm font-semibold border-b-2 -mb-px transition-colors ${
+                    activeTab === tab.key
+                      ? "border-emerald-500 text-emerald-600"
+                      : tab.disabled
+                        ? "border-transparent text-gray-300 cursor-not-allowed"
+                        : "border-transparent text-gray-500 hover:text-gray-800"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Sənədlər ── */}
+      {activeTab === "documents" && (
+        <div className="max-w-5xl mx-auto px-6 py-8">
+          <div className="flex gap-4 mb-6">
+            <div className="relative flex-1">
+              <FontAwesomeIcon
+                icon={faSearch}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"
+              />
+              <input
+                value={docSearch}
+                onChange={(e) => setDocSearch(e.target.value)}
+                placeholder="Sənəd axtar..."
+                className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm bg-white"
+              />
+            </div>
             <button
               onClick={fetchDocuments}
-              className="px-5 py-2 bg-gray-800 text-white rounded-xl text-sm font-semibold hover:bg-gray-700 transition-colors"
+              className="w-12 h-12 rounded-2xl bg-white border-2 border-gray-200 hover:border-emerald-400 flex items-center justify-center transition-colors"
             >
-              Yenidən cəhd et
+              <FontAwesomeIcon
+                icon={faRotateRight}
+                className="text-gray-500 text-sm"
+              />
             </button>
           </div>
-        )}
 
-        {/* ── Boş ── */}
-        {!loading && !error && filtered.length === 0 && (
-          <div className="text-center py-20 text-gray-400">
-            <FontAwesomeIcon
-              icon={faBoxOpen}
-              className="text-5xl text-gray-200 mb-4"
-            />
-            <p>Heç bir sənəd tapılmadı</p>
-          </div>
-        )}
-
-        {/* ── Kartlar ── */}
-        {!loading && !error && filtered.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filtered.map((doc) => (
-              <DocumentCard
-                key={doc.id}
-                doc={doc}
-                user={user}
-                onDownload={handleDownload}
-                onPreview={handlePreview}
-              />
+          <div className="flex gap-2 flex-wrap mb-6">
+            {DOC_CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setDocCategory(cat)}
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                  docCategory === cat
+                    ? "bg-emerald-500 text-white shadow-sm"
+                    : "bg-white border border-gray-200 text-gray-600 hover:border-emerald-400 hover:text-emerald-600"
+                }`}
+              >
+                {cat}
+              </button>
             ))}
           </div>
-        )}
-      </div>
+
+          {!docLoading && !docError && (
+            <p className="text-sm text-gray-400 mb-4">
+              {filteredDocs.length} sənəd tapıldı
+            </p>
+          )}
+
+          {docLoading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-2xl border border-gray-200 p-5 animate-pulse h-36"
+                />
+              ))}
+            </div>
+          )}
+          {docError && (
+            <div className="text-center py-16">
+              <FontAwesomeIcon
+                icon={faTriangleExclamation}
+                className="text-4xl text-amber-400 mb-3"
+              />
+              <p className="text-gray-500 mb-4">{docError}</p>
+              <button
+                onClick={fetchDocuments}
+                className="px-5 py-2 bg-gray-800 text-white rounded-xl text-sm font-semibold"
+              >
+                Yenidən cəhd et
+              </button>
+            </div>
+          )}
+          {!docLoading && !docError && filteredDocs.length === 0 && (
+            <div className="text-center py-20 text-gray-400">
+              <FontAwesomeIcon
+                icon={faBoxOpen}
+                className="text-5xl text-gray-200 mb-4"
+              />
+              <p>Heç bir sənəd tapılmadı</p>
+            </div>
+          )}
+          {!docLoading && !docError && filteredDocs.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredDocs.map((doc) => (
+                <DocumentCard
+                  key={doc.id}
+                  doc={doc}
+                  user={user}
+                  onDownload={handleDownload}
+                  onPreview={handlePreview}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Testlər ── */}
+      {activeTab === "tests" && (
+        <div className="max-w-5xl mx-auto px-6 py-8">
+          <div className="flex gap-4 mb-6">
+            <div className="relative flex-1">
+              <FontAwesomeIcon
+                icon={faSearch}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"
+              />
+              <input
+                value={testSearch}
+                onChange={(e) => setTestSearch(e.target.value)}
+                placeholder="Test axtar..."
+                className="w-full pl-11 pr-4 py-3 rounded-2xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none text-sm bg-white"
+              />
+            </div>
+            <button
+              onClick={fetchTests}
+              className="w-12 h-12 rounded-2xl bg-white border-2 border-gray-200 hover:border-emerald-400 flex items-center justify-center transition-colors"
+            >
+              <FontAwesomeIcon
+                icon={faRotateRight}
+                className="text-gray-500 text-sm"
+              />
+            </button>
+          </div>
+
+          <div className="flex gap-2 flex-wrap mb-6">
+            {TEST_CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setTestCategory(cat)}
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                  testCategory === cat
+                    ? "bg-emerald-500 text-white shadow-sm"
+                    : "bg-white border border-gray-200 text-gray-600 hover:border-emerald-400 hover:text-emerald-600"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {testLoading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-2xl border border-gray-200 p-5 animate-pulse h-40"
+                />
+              ))}
+            </div>
+          )}
+          {!testLoading && filteredTests.length === 0 && (
+            <div className="text-center py-20 text-gray-400">
+              <FontAwesomeIcon
+                icon={faBoxOpen}
+                className="text-5xl text-gray-200 mb-4"
+              />
+              <p>Test tapılmadı</p>
+            </div>
+          )}
+          {!testLoading && filteredTests.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredTests.map((test) => (
+                <div
+                  key={test.id}
+                  onClick={() => navigate(`/test/${test.id}`)}
+                  className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group overflow-hidden"
+                >
+                  {test.thumbnail ? (
+                    <img
+                      src={test.thumbnail}
+                      alt=""
+                      className="w-full h-36 object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-36 bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
+                      <FontAwesomeIcon
+                        icon={faClipboardList}
+                        className="text-4xl text-emerald-200"
+                      />
+                    </div>
+                  )}
+                  <div className="p-5">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <span className="text-xs bg-emerald-50 text-emerald-700 font-semibold px-2 py-0.5 rounded-full">
+                        {test.age_group}
+                      </span>
+                      <span className="text-xs bg-gray-100 text-gray-600 font-medium px-2 py-0.5 rounded-full">
+                        {test.category}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {test.test_questions?.length || 0} sual
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-gray-900 mb-1 group-hover:text-emerald-600 transition-colors">
+                      {test.title}
+                    </h3>
+                    {test.description && (
+                      <p className="text-xs text-gray-400 line-clamp-2 mb-3">
+                        {test.description}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+                      Testi keç{" "}
+                      <FontAwesomeIcon
+                        icon={faArrowRight}
+                        className="text-xs group-hover:translate-x-1 transition-transform"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ── Modallar ── */}
       {showContact && (
@@ -290,7 +536,6 @@ export default function DocumentsPage() {
           }}
         />
       )}
-
       {previewDoc && (
         <PreviewModal doc={previewDoc} onClose={() => setPreviewDoc(null)} />
       )}
@@ -311,7 +556,6 @@ function DocumentCard({ doc, user, onDownload, onPreview }) {
       >
         <FontAwesomeIcon icon={ft.icon} className={`${ft.color} text-2xl`} />
       </div>
-
       <div className="flex-1 min-w-0">
         <div className="flex items-start gap-2 mb-1 flex-wrap">
           <span
@@ -325,29 +569,24 @@ function DocumentCard({ doc, user, onDownload, onPreview }) {
             </span>
           )}
         </div>
-
         <h3 className="text-gray-800 font-semibold text-sm leading-snug mb-1 truncate">
           {doc.title}
         </h3>
-
         {doc.description && (
           <p className="text-xs text-gray-400 leading-relaxed line-clamp-2 mb-2">
             {doc.description}
           </p>
         )}
-
         <div className="flex items-center gap-3 text-xs text-gray-400">
           {doc.file_size && <span>{formatBytes(doc.file_size)}</span>}
           {doc.download_count > 0 && <span>{doc.download_count} yükləmə</span>}
         </div>
       </div>
-
       <div className="flex flex-col gap-2 flex-shrink-0">
         {canPreview && (
           <button
             onClick={() => onPreview(doc)}
             className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-blue-100 flex items-center justify-center transition-colors group"
-            title={user ? "Bax" : "Daxil olun"}
           >
             <FontAwesomeIcon
               icon={user ? faEye : faLock}
@@ -358,7 +597,6 @@ function DocumentCard({ doc, user, onDownload, onPreview }) {
         <button
           onClick={() => onDownload(doc)}
           className="w-9 h-9 rounded-xl bg-emerald-50 hover:bg-emerald-500 flex items-center justify-center transition-colors group"
-          title={user ? "Yüklə" : "Daxil olun"}
         >
           <FontAwesomeIcon
             icon={user ? faDownload : faLock}
@@ -379,9 +617,7 @@ function ContactModal({ doc, type, onClose, onPreviewOpen }) {
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
-
     try {
-      // 1) Supabase-ə yaz
       await supabase.from("contact_requests").insert({
         name: form.name,
         phone: form.phone,
@@ -389,8 +625,6 @@ function ContactModal({ doc, type, onClose, onPreviewOpen }) {
         document_title: doc?.title || "",
         request_type: type,
       });
-
-      // 2) EmailJS ilə email göndər
       await emailjs.send(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
@@ -406,11 +640,9 @@ function ContactModal({ doc, type, onClose, onPreviewOpen }) {
         },
         EMAILJS_PUBLIC_KEY,
       );
-
       setSent(true);
     } catch (err) {
       alert("Müraciət göndərilmədi. Yenidən cəhd edin.");
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -469,18 +701,15 @@ function ContactModal({ doc, type, onClose, onPreviewOpen }) {
                 ✕
               </button>
             </div>
-
             {doc && (
               <div className="bg-gray-50 rounded-xl px-4 py-3 mb-4 text-sm text-gray-600">
                 📄 <span className="font-semibold">{doc.title}</span>
               </div>
             )}
-
             <p className="text-gray-500 text-sm mb-5">
               Bu material üçün əlaqə məlumatlarınızı buraxın, sizinlə əlaqə
               saxlayacağıq.
             </p>
-
             <form onSubmit={handleSubmit} className="space-y-3">
               <input
                 value={form.name}
@@ -556,7 +785,6 @@ function PreviewModal({ doc, onClose }) {
             ✕
           </button>
         </div>
-
         <div className="flex-1 overflow-hidden">
           <iframe
             src={`${doc.file_url}#toolbar=1&navpanes=0`}
@@ -565,7 +793,6 @@ function PreviewModal({ doc, onClose }) {
             style={{ border: "none" }}
           />
         </div>
-
         <div className="flex items-center justify-between px-5 py-3 border-t border-gray-200 bg-gray-50">
           <p className="text-xs text-gray-400">
             Brauzer daxilində baxış — tam görüntü üçün yükləyin
@@ -577,8 +804,7 @@ function PreviewModal({ doc, onClose }) {
             rel="noopener noreferrer"
             className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors"
           >
-            <FontAwesomeIcon icon={faDownload} />
-            Yüklə
+            <FontAwesomeIcon icon={faDownload} /> Yüklə
           </a>
         </div>
       </div>
