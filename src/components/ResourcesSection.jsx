@@ -63,23 +63,19 @@ export default function ResourcesSection() {
 
   useEffect(() => {
     async function fetchCounts() {
-      const { data } = await supabase.from("documents").select("category");
-      if (!data) return;
+      // Sənədlər
+      const { data: docs } = await supabase.from("documents").select("id");
+      // Oyunlar
+      const { data: games } = await supabase.from("games").select("id");
+      // Testlər
+      const { data: tests } = await supabase.from("tests").select("id");
 
-      const result = {};
-      CONFIGS.forEach((cfg) => {
-        const cats = CATEGORY_MAP[cfg.key];
-        result[cfg.key] = data.filter((d) => cats.includes(d.category)).length;
+      setCounts({
+        "Metodik vəsaitlər": docs?.length ?? 0,
+        "İnkişaf oyunları": games?.length ?? 0,
+        "Psixoloji testlər": tests?.length ?? 0,
+        "PDF kitablar": docs?.filter(() => true).length ?? 0, // eyni docs
       });
-
-      // PDF kitablar üçün mime_type-a da bax
-      const { data: pdfData } = await supabase
-        .from("documents")
-        .select("id")
-        .ilike("file_url", "%.pdf");
-      result["PDF kitablar"] = pdfData?.length ?? 0;
-
-      setCounts(result);
     }
     fetchCounts();
   }, []);
@@ -111,7 +107,9 @@ export default function ResourcesSection() {
                 key={cfg.key}
                 onClick={() => {
                   if (cfg.key === "İnkişaf oyunları") navigate("/oyunlar");
-                  else navigate("/resources");
+                  else if (cfg.key === "Psixoloji testlər")
+                    navigate("/resources", { state: { tab: "tests" } });
+                  else navigate("/resources", { state: { tab: "documents" } });
                 }}
                 className={`border-2 ${cfg.border} ${cfg.hover} rounded-2xl p-6 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:-translate-y-1 flex flex-col items-center text-center bg-white`}
               >
